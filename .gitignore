@@ -1,0 +1,13 @@
+**/Objects/*
+!**/Objects/*.hex
+Listings/
+DebugConfig/
+**/RTE/_*/
+*.uvgui.* *.uvguix.* *.uvopt *.uvoptx
+*.obj *.o *.lst *.m51 *.map *.lnp *.axf *.htm *.dep *.d *.crf *.__i *.bak
+Debug/
+Release/
+.metadata/
+.DS_Store
+__pycache__/
+*.pyc
