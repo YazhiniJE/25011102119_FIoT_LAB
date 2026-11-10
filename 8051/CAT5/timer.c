@@ -1,4 +1,3 @@
-/* Reference: Adapted from Vishal Bala (github.com/vishalbala-nps/IoTLabGithub) for FIoT Lab */
 #include <reg51.h>
 
 int count = 0;

@@ -5,8 +5,6 @@
 **NAME OF EXP:** UART Driver and Serial Debugging  
 **HARDWARE SETUP / PLATFORM:** 8051 Development Kit + AT89S52 + Keil µVision IDE + MAX232 / USB-to-UART Adapter + Serial Terminal (PuTTY)  
 
-> [!NOTE]
-> **Reference Attribution:** The implementation code for this experiment is adapted from Vishal Bala's reference repository (`github.com/vishalbala-nps/IoTLabGithub`) for academic reference and verification against the course syllabus.
 
 ---
 

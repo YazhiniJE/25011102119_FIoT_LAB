@@ -1,4 +1,3 @@
-/* Reference: Adapted from Vishal Bala (github.com/vishalbala-nps/IoTLabGithub) for FIoT Lab */
 #ifndef DELAY_H
 #define DELAY_H
 

@@ -127,10 +127,3 @@ The directory hierarchy strictly adheres to the course submission specification:
 - **Node-RED** for cloud MQTT subscriber dashboard and HTTP request client validation.
 
 ---
-
-## 4. Academic Integrity & Reference Notices
-
-- **CAT2 through CAT7 (8051):** Original 8051 source code was referenced and adapted from Vishal Bala's repository (`github.com/vishalbala-nps/IoTLabGithub`). Reference attribution is preserved in all corresponding C source files and experiment documentation.
-- **CAT8 through CAT13 (STM32):** Built upon original student implementations and lab experiments, with missing sub-tasks adapted from course reference materials and unified with the student's board pin assignments.
-- **Credentials & Privacy:** All network credentials across Wi-Fi association and cloud brokers have been sanitized to `YOUR_WIFI_SSID` / `YOUR_WIFI_PASSWORD` placeholders.
-

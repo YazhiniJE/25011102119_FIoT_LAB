@@ -5,8 +5,6 @@
 **NAME OF EXP:** Human-Machine Interface using Matrix Keypad, LEDs, and Seven-Segment Display  
 **HARDWARE SETUP / PLATFORM:** 8051 Development Kit + AT89S52 + Keil µVision IDE + 4x4 Matrix Keypad + 7-Segment Display + 4x LEDs  
 
-> [!NOTE]
-> **Reference Attribution:** The implementation code for this experiment is adapted from Vishal Bala's reference repository (`github.com/vishalbala-nps/IoTLabGithub`) for academic reference and verification against the course syllabus.
 
 ---
 

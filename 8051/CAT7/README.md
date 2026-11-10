@@ -5,8 +5,6 @@
 **NAME OF EXP:** 16x2 LCD Driver Development and Dynamic Display Control  
 **HARDWARE SETUP / PLATFORM:** 8051 Development Kit + AT89S52 + Keil µVision IDE + 16x2 HD44780 LCD Display + 4x4 Matrix Keypad  
 
-> [!NOTE]
-> **Reference Attribution:** The implementation code for this experiment is adapted from Vishal Bala's reference repository (`github.com/vishalbala-nps/IoTLabGithub`) for academic reference and verification against the course syllabus.
 
 ---
 

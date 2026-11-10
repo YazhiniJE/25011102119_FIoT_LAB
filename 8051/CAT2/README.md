@@ -5,8 +5,6 @@
 **NAME OF EXP:** 8051 Tool Chain Setup, Bare-Metal LED Blink  
 **HARDWARE SETUP / PLATFORM:** 8051 Development Kit + AT89S52 MCU + Keil µVision IDE + On-board LED  
 
-> [!NOTE]
-> **Reference Attribution:** The implementation code for this experiment is adapted from Vishal Bala's reference repository (`github.com/vishalbala-nps/IoTLabGithub`) for academic reference and verification against the course syllabus.
 
 ---
 

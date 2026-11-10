@@ -1,4 +1,3 @@
-/* Reference: Adapted from Vishal Bala (github.com/vishalbala-nps/IoTLabGithub) for FIoT Lab */
 #include "delay.h"
 
 // ~1 ms per count: two 153-pass loops of 3 machine cycles each
