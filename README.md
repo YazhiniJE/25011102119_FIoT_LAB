@@ -25,7 +25,7 @@
 | **CAT 10** | STM32 + Wemos D1 Mini (ESP8266) | 12/10/2026 | STM32-Wemos Wi-Fi Modem Using AT Commands / HTTP Server | • [TASK10A](STM32/CAT10/TASK10A/): STM32-ESP8266 UART sync ('AT' -> 'OK')<br>• [TASK10B](STM32/CAT10/TASK10B/): Station Wi-Fi connection controller (CWJAP, CIFSR)<br>• [TASK10C](STM32/CAT10/TASK10C/): Embedded TCP/HTTP Server on Port 80 (/LED/ON, /LED/OFF) | [STM32/CAT10](STM32/CAT10/) |
 | **CAT 11** | NUCLEO-F401RE / Blue Pill | 19/10/2026 | STM32 ARM Cortex-M: GPIO and User Input Programming | • [TASK11A](STM32/CAT11/TASK11A/): Heartbeat LED blink (PA5 / PC13) at 1 Hz<br>• [TASK11B](STM32/CAT11/TASK11B/): Push-button (PC13 / B1) debounced state toggle | [STM32/CAT11](STM32/CAT11/) |
 | **CAT 12** | STM32 + Bosch BME280 | 26/10/2026 | BME280 Environmental Sensor Interfacing Using I2C | • [TASK12A](STM32/CAT12/TASK12A/): I2C master bus scanner (0x01–0x77 address probing)<br>• [TASK12B](STM32/CAT12/TASK12B/): BME280 calibration readout & measurement driver<br>• [TASK12C](STM32/CAT12/TASK12C/): Serial telemetry streamer (JSON/CSV formatted) | [STM32/CAT12](STM32/CAT12/) |
-| **CAT 13** | STM32 + BME280 + ESP8266 | 02/11/2026 | Cloud IoT Telemetry — BME280 + ESP8266 MQTT Publisher | • [TASK13](STM32/CAT13/TASK13/): Publishes environmental JSON telemetry to MQTT broker (roker.hivemq.com / roker.emqx.io) | [STM32/CAT13](STM32/CAT13/) |
+| **CAT 13** | STM32 + BME280 + ESP8266 | 02/11/2026 | Cloud IoT Telemetry — BME280 + ESP8266 MQTT Publisher | • [TASK13](STM32/CAT13/TASK13/): Publishes environmental JSON telemetry to MQTT broker (roker.hivemq.com) | [STM32/CAT13](STM32/CAT13/) |
 | **CAT 14** | STM32 Blue Pill (STM32F103C8T6) | 09/11/2026 | Interactive Dual-MCU UART Game Controller (PingPong) | • [TASK14](STM32/CAT14/TASK14/): Dual-MCU PingPong Player Node with paddle buttons, Hit/Miss LEDs & UART bus | [STM32/CAT14](STM32/CAT14/) |
 
 ---
@@ -38,7 +38,6 @@ Each CAT directory and each task subfolder contains its own self-contained Keil 
 25011102119_FIoT_LAB/
 ├── README.md                           # Master index and laboratory summary
 ├── .gitignore                          # Keil/STM32 build exclusions (following course standard)
-├── IoT_Lab_Evaluation_Report.pdf       # Automated faculty evaluation audit report (28/28 PASS)
 │
 ├── 8051/                               # 8051 Microcontroller (AT89S52) Experiments
 │   ├── CAT2/                           # Bare-Metal LED Blink & Delay Library
@@ -118,18 +117,3 @@ Each CAT directory and each task subfolder contains its own self-contained Keil 
         ├── README.md, circuit.png
         └── TASK14/                     # PingPong Player Node (Core, Drivers, MDK-ARM, Player.ioc, README.md)
 `
-
----
-
-## 3. Automated Faculty Evaluation Summary
-
-The repository has been audited against the automated evaluation harness:
-
-- **Tasks Discovered:** 28 / 28
-- **Tasks Passed:** 28 / 28
-- **File Checks Passed:** 198 / 198
-- **Missing Required Files:** 0
-- **Missing Circuit Diagrams:** 0
-- **Overall Status:** **PASSED**
-
-Full audit report with individual file checks and technical extractions: [IoT_Lab_Evaluation_Report.pdf](IoT_Lab_Evaluation_Report.pdf).
