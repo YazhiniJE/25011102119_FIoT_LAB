@@ -10,7 +10,7 @@
 
 ---
 
-## 1. Laboratory Experiments Index (CAT 2 – CAT 14)
+## Laboratory Experiments Index (CAT 2 – CAT 14)
 
 | CAT | Platform | Date | Experiment Title | Tasks & Subtasks | Experiment Folder |
 |:---:|:---|:---:|:---|:---|:---:|
@@ -27,93 +27,3 @@
 | **CAT 12** | STM32 + Bosch BME280 | 26/10/2026 | BME280 Environmental Sensor Interfacing Using I2C | • [TASK12A](STM32/CAT12/TASK12A/): I2C master bus scanner (0x01–0x77 address probing)<br>• [TASK12B](STM32/CAT12/TASK12B/): BME280 calibration readout & measurement driver<br>• [TASK12C](STM32/CAT12/TASK12C/): Serial telemetry streamer (JSON/CSV formatted) | [STM32/CAT12](STM32/CAT12/) |
 | **CAT 13** | STM32 + BME280 + ESP8266 | 02/11/2026 | Cloud IoT Telemetry — BME280 + ESP8266 MQTT Publisher | • [TASK13](STM32/CAT13/TASK13/): Publishes environmental JSON telemetry to MQTT broker (roker.hivemq.com) | [STM32/CAT13](STM32/CAT13/) |
 | **CAT 14** | STM32 Blue Pill (STM32F103C8T6) | 09/11/2026 | Interactive Dual-MCU UART Game Controller (PingPong) | • [TASK14](STM32/CAT14/TASK14/): Dual-MCU PingPong Player Node with paddle buttons, Hit/Miss LEDs & UART bus | [STM32/CAT14](STM32/CAT14/) |
-
----
-
-## 2. Repository Structure
-
-Each CAT directory and each task subfolder contains its own self-contained Keil project, C source code, startup assembly, output binaries, circuit schematic, and a dedicated technical README.md:
-
-`	ext
-25011102119_FIoT_LAB/
-├── README.md                           # Master index and laboratory summary
-├── .gitignore                          # Keil/STM32 build exclusions (following course standard)
-│
-├── 8051/                               # 8051 Microcontroller (AT89S52) Experiments
-│   ├── CAT2/                           # Bare-Metal LED Blink & Delay Library
-│   │   ├── README.md                   # CAT 2 Overview & index
-│   │   ├── circuit.png                 # Hardware schematic
-│   │   └── TASK2B/                     # Task 2B Project
-│   │       ├── README.md               # Task 2B detailed documentation
-│   │       ├── day1task.uvproj         # Keil project
-│   │       ├── prog1.c, delay.c/h      # C sources
-│   │       ├── STARTUP.A51             # 8051 Startup code
-│   │       ├── circuit.png             # Circuit diagram
-│   │       └── Objects/ (day1task.hex) # Compiled firmware binary
-│   │
-│   ├── CAT3/                           # 4-Mode LED Pattern Generator & Button Controller
-│   │   ├── README.md, circuit.png
-│   │   └── TASK3A/ (day2.uvproj, day2.c, STARTUP.A51, Objects/day2.hex, README.md)
-│   │
-│   ├── CAT4/                           # HMI: 4x4 Matrix Keypad, 7-Segment & LEDs
-│   │   ├── README.md, circuit.png
-│   │   └── TASK4A/ (sevenseg.uvproj, sevensg.c, STARTUP.A51, Objects/sevenseg.hex, README.md)
-│   │
-│   ├── CAT5/                           # Hardware Timer0 Interrupt Timing (PWM, Wave, Stepper)
-│   │   ├── README.md, circuit.png
-│   │   ├── TASK5A/                     # Hardware Timer0 1 ms tick (timers.uvproj, timer.c, Objects/*.hex, README.md)
-│   │   ├── TASK5B/                     # Software PWM and Waveforms
-│   │   │   ├── README.md
-│   │   │   ├── TASK5B.1/               # Software PWM LED Fading (pwm_fade.c, Objects/*.hex, README.md)
-│   │   │   ├── TASK5B.2/               # Square Wave Generator 1k/2k (square_wave.c, Objects/*.hex, README.md)
-│   │   │   └── TASK5B.3/               # Frequency Sweep 100Hz-5kHz (freq_sweep.c, Objects/*.hex, README.md)
-│   │   └── TASK5C/                     # Stepper Motor Drive (stepper.c, Objects/*.hex, README.md)
-│   │
-│   ├── CAT6/                           # UART Serial Driver & Echo Terminal
-│   │   ├── README.md, circuit.png
-│   │   ├── TASK6A/                     # Continuous String Transmitter (README.md, uart_tx.c, Objects/*.hex)
-│   │   └── TASK6B/                     # Full-Duplex Echo Console (README.md, uart_echo.c, Objects/*.hex)
-│   │
-│   └── CAT7/                           # 16x2 HD44780 LCD Driver & Dynamic Navigation
-│       ├── README.md, circuit.png
-│       ├── TASK7A/                     # 4-bit LCD Initialization & Text Banner (lcd.c, README.md)
-│       ├── TASK7B/                     # DDRAM Addressing & Live Counter (lcd.c, README.md)
-│       └── TASK7C/                     # Keypad 2/8/4/6 Cursor Navigation (lcd.c, README.md)
-│
-└── STM32/                              # STM32 Microcontroller Experiments
-    ├── CAT8/                           # STM32F103 Blue Pill GPIO & Switch Control
-    │   ├── README.md, circuit.png
-    │   ├── TASK8A/                     # GPIO Level Tracking (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   ├── TASK8B/                     # Software Debounced Toggle (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   └── TASK8C/                     # Short (<1s) vs Long (>=1s) Press (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │
-    ├── CAT9/                           # STM32F103 UART Command Controlled LED
-    │   ├── README.md, circuit.png
-    │   ├── TASK9A/                     # USART1 Heartbeat & Echo (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   └── TASK9B/                     # Command CLI ('LED ON/OFF/TOGGLE') (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │
-    ├── CAT10/                          # STM32 + Wemos D1 Mini Wi-Fi HTTP Server
-    │   ├── README.md, circuit.png
-    │   ├── TASK10A/                    # AT Command Modem Bring-Up (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   ├── TASK10B/                    # Station Wi-Fi Join Controller (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   └── TASK10C/                    # Embedded TCP/HTTP Web Server (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │
-    ├── CAT11/                          # STM32 ARM Cortex-M GPIO Bring-Up
-    │   ├── README.md, circuit.png
-    │   ├── TASK11A/                    # Heartbeat LED Blink PA5/PC13 (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   └── TASK11B/                    # Push Button PC13 Debounced Toggle (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │
-    ├── CAT12/                          # STM32 + BME280 I2C Telemetry
-    │   ├── README.md, circuit.png
-    │   ├── TASK12A/                    # I2C Bus Scanner 0x01–0x77 (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   ├── TASK12B/                    # BME280 Driver & Calibration Readout (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │   └── TASK12C/                    # JSON/CSV Serial Telemetry Streamer (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │
-    ├── CAT13/                          # STM32 + BME280 + ESP8266 Cloud MQTT Publisher
-    │   ├── README.md, circuit.png
-    │   └── TASK13/                     # MQTT Publisher to broker.hivemq.com (Core, Drivers, MDK-ARM, .ioc, README.md)
-    │
-    └── CAT14/                          # Interactive Dual-MCU UART Game Controller
-        ├── README.md, circuit.png
-        └── TASK14/                     # PingPong Player Node (Core, Drivers, MDK-ARM, Player.ioc, README.md)
-`
