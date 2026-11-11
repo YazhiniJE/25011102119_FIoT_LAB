@@ -10,120 +10,126 @@
 
 ---
 
-## 1. Laboratory Experiments Index
+## 1. Laboratory Experiments Index (CAT 2 – CAT 14)
 
-| CAT | Platform | Date | Experiment Title | Key Tasks & Objectives | Experiment Folder |
+| CAT | Platform | Date | Experiment Title | Tasks & Subtasks | Experiment Folder |
 |:---:|:---|:---:|:---|:---|:---:|
-| **CAT 2** | 8051 (AT89S52) | 20/07/2026 | 8051 Tool Chain Setup, Bare-Metal LED Blink | • Board bring-up & toolchain setup<br>• Bare-metal LED blink ~1 Hz on P1.0<br>• Custom calibrated delay library (`delay.c`/`delay.h`) | [8051/CAT2](8051/CAT2/) |
-| **CAT 3** | 8051 (AT89S52) | 27/07/2026 | Timer-Based LED Pattern Generator and Button Interrupt Controller | • 4 LEDs + matrix tactile push button<br>• Debounced state controller<br>• 4 modes: Running LED, Binary Counter, Alternate 1010/0101, All Flash | [8051/CAT3](8051/CAT3/) |
-| **CAT 4** | 8051 (AT89S52) | 03/08/2026 | Human-Machine Interface using Matrix Keypad, LEDs, and Seven-Segment Display | • 4x4 matrix keypad scanner<br>• 7-segment display numeric feedback (0–9)<br>• Multi-mode LED controller (individual, running, alternate, binary 0–15, blink, reset) | [8051/CAT4](8051/CAT4/) |
-| **CAT 5** | 8051 (AT89S52) | 10/08/2026 | Hardware Timer and Interrupt-Based Timing for LED Fading, Pulse Generation, and Stepper Motor Control | • Hardware Timer 0 in 16-bit Mode 1<br>• Deterministic 1.0 s interval (200 overflows)<br>• 0.5 Hz symmetric square wave pulse generation without software loops | [8051/CAT5](8051/CAT5/) |
-| **CAT 6** | 8051 (AT89S52) | 17/08/2026 | UART Driver and Serial Debugging | • 9600-8-N-1 UART framing (Timer 1 Mode 2 auto-reload)<br>• Task A: Continuous string transmission (`"Hello from 8051"`)<br>• Task B: Full-duplex interactive character echo | [8051/CAT6](8051/CAT6/) |
-| **CAT 7** | 8051 (AT89S52) | 24/08/2026 | 16x2 LCD Driver Development and Dynamic Display Control | • 4-bit HD44780 LCD driver (`lcd_init`, `lcd_cmd`, `lcd_data`)<br>• Dynamic cursor DDRAM addressing (`lcd_goto`) & counter display<br>• Keypad 2/8/4/6 interactive directional character movement | [8051/CAT7](8051/CAT7/) |
-| **CAT 8** | STM32 Blue Pill (STM32F103C8T6) | 18/09/2026 | STM32 GPIO Bring-Up and Switch-Controlled LED | • Task 8A: GPIO input/output level tracking<br>• Task 8B: Software debounced toggle control<br>• Task 8C: Non-blocking dual-mode duration controller (Short <1s vs Long ≥1s press) | [STM32/CAT8](STM32/CAT8/) |
-| **CAT 9** | STM32 Blue Pill (STM32F103C8T6) | 28/09/2026 | STM32 UART Command Controlled LED | • Task 9A: USART1 character transmission and echo<br>• Task 9B: Interactive ASCII command decoder (`LED ON`, `LED OFF`, `LED TOGGLE`) with `\r` and `\n` handling | [STM32/CAT9](STM32/CAT9/) |
-| **CAT 10** | STM32 Blue Pill + Wemos D1 Mini (ESP8266) | 12/10/2026 | STM32-Wemos Wi-Fi Modem Using AT Commands / HTTP Server | • Dual USART modem architecture (AT commands at 115200 baud)<br>• Multi-connection TCP Server binding on Port 80 (`AT+CIPSERVER`)<br>• Incoming HTTP `+IPD` frame parsing and HTTP 200 OK dynamic web server | [STM32/CAT10](STM32/CAT10/) |
-| **CAT 11** | ST NUCLEO-F401RE (ARM Cortex-M4) | 14/10/2026 | STM32F401RE Cortex-M4: GPIO and User Input Programming | • Task 1: Bare-metal on-board user LED blink (LD2 / PA5)<br>• Task 2: Push button (PC13) latching with 30 ms debounce<br>• Task 3: Short tap toggle vs Long hold (≥500 ms) rapid alert blink | [STM32/CAT11](STM32/CAT11/) |
-| **CAT 12** | ST NUCLEO-F401RE + Bosch BME280 | 23/10/2026 | BME280 Sensor Interfacing Using I2C and Bosch Sensor API | • Standard Mode (100 kHz) I2C1 communication with BME280 (0x76)<br>• Bosch Sensortec API integration (`bme280.c`/`bme280.h`)<br>• High-precision compensation for Temperature, Pressure, and Humidity | [STM32/CAT12](STM32/CAT12/) |
-| **CAT 13** | ST NUCLEO-F401RE + BME280 + ESP8266 | 27/10/2026 | BME280 Sensor Interfacing Using I2C and MQTT using Custom Built ESP8266 API | • Custom modem API (`ESPLib.c`/`ESPLib.h`)<br>• JSON environmental telemetry payload formatting<br>• TCP connection and MQTT publishing to `broker.emqx.io:1883`<br>• Real-time Node-RED telemetry dashboard visualization | [STM32/CAT13](STM32/CAT13/) |
+| **CAT 2** | 8051 (AT89S52) | 20/07/2026 | 8051 Tool Chain Setup, Bare-Metal LED Blink | • [TASK2B](8051/CAT2/TASK2B/): Bare-metal LED blink ~1 Hz & custom delay library | [8051/CAT2](8051/CAT2/) |
+| **CAT 3** | 8051 (AT89S52) | 27/07/2026 | Timer-Based LED Pattern Generator & Button Controller | • [TASK3A](8051/CAT3/TASK3A/): 4-mode debounced pattern sequencer (Running, Counter, Alternate, Flash) | [8051/CAT3](8051/CAT3/) |
+| **CAT 4** | 8051 (AT89S52) | 03/08/2026 | HMI using Matrix Keypad, LEDs, and 7-Segment Display | • [TASK4A](8051/CAT4/TASK4A/): Keypad 0–9 decoding, 7-segment display & animated LED modes | [8051/CAT4](8051/CAT4/) |
+| **CAT 5** | 8051 (AT89S52) | 10/08/2026 | Hardware Timer & Interrupt Timing (PWM, Wave, Stepper) | • [TASK5A](8051/CAT5/TASK5A/): Hardware Timer0 1 ms tick & 1 s LED toggle<br>• [TASK5B.1](8051/CAT5/TASK5B/TASK5B.1/): Software PWM LED fading (0-100-0%)<br>• [TASK5B.2](8051/CAT5/TASK5B/TASK5B.2/): Square wave pulse generator (1 kHz & 2 kHz)<br>• [TASK5B.3](8051/CAT5/TASK5B/TASK5B.3/): Multi-tone sweep generator (100 Hz–5 kHz)<br>• [TASK5C](8051/CAT5/TASK5C/): Stepper motor 4-phase commutation controller | [8051/CAT5](8051/CAT5/) |
+| **CAT 6** | 8051 (AT89S52) | 17/08/2026 | UART Driver and Serial Debugging | • [TASK6A](8051/CAT6/TASK6A/): Continuous string transmitter ('Hello from 8051')<br>• [TASK6B](8051/CAT6/TASK6B/): Interactive full-duplex serial character echo console | [8051/CAT6](8051/CAT6/) |
+| **CAT 7** | 8051 (AT89S52) | 24/08/2026 | 16x2 LCD Driver Development & Dynamic Display Control | • [TASK7A](8051/CAT7/TASK7A/): 4-bit HD44780 driver & static text banner<br>• [TASK7B](8051/CAT7/TASK7B/): DDRAM positioning (lcd_goto) & dynamic telemetry counter<br>• [TASK7C](8051/CAT7/TASK7C/): Keypad 2/8/4/6 interactive cursor navigation | [8051/CAT7](8051/CAT7/) |
+| **CAT 8** | STM32 Blue Pill (STM32F103C8T6) | 18/09/2026 | STM32 GPIO Bring-Up and Switch-Controlled LED | • [TASK8A](STM32/CAT8/TASK8A/): GPIO input/output level tracking (LED follows switch)<br>• [TASK8B](STM32/CAT8/TASK8B/): Software debounced toggle control<br>• [TASK8C](STM32/CAT8/TASK8C/): Non-blocking Short press (<1s) vs Long press (>=1s) blink mode | [STM32/CAT8](STM32/CAT8/) |
+| **CAT 9** | STM32 Blue Pill (STM32F103C8T6) | 28/09/2026 | STM32 UART Command Controlled LED | • [TASK9A](STM32/CAT9/TASK9A/): USART1 continuous heartbeat & echo console<br>• [TASK9B](STM32/CAT9/TASK9B/): String command parser ('LED ON', 'LED OFF', 'LED TOGGLE') | [STM32/CAT9](STM32/CAT9/) |
+| **CAT 10** | STM32 + Wemos D1 Mini (ESP8266) | 12/10/2026 | STM32-Wemos Wi-Fi Modem Using AT Commands / HTTP Server | • [TASK10A](STM32/CAT10/TASK10A/): STM32-ESP8266 UART sync ('AT' -> 'OK')<br>• [TASK10B](STM32/CAT10/TASK10B/): Station Wi-Fi connection controller (CWJAP, CIFSR)<br>• [TASK10C](STM32/CAT10/TASK10C/): Embedded TCP/HTTP Server on Port 80 (/LED/ON, /LED/OFF) | [STM32/CAT10](STM32/CAT10/) |
+| **CAT 11** | NUCLEO-F401RE / Blue Pill | 19/10/2026 | STM32 ARM Cortex-M: GPIO and User Input Programming | • [TASK11A](STM32/CAT11/TASK11A/): Heartbeat LED blink (PA5 / PC13) at 1 Hz<br>• [TASK11B](STM32/CAT11/TASK11B/): Push-button (PC13 / B1) debounced state toggle | [STM32/CAT11](STM32/CAT11/) |
+| **CAT 12** | STM32 + Bosch BME280 | 26/10/2026 | BME280 Environmental Sensor Interfacing Using I2C | • [TASK12A](STM32/CAT12/TASK12A/): I2C master bus scanner (0x01–0x77 address probing)<br>• [TASK12B](STM32/CAT12/TASK12B/): BME280 calibration readout & measurement driver<br>• [TASK12C](STM32/CAT12/TASK12C/): Serial telemetry streamer (JSON/CSV formatted) | [STM32/CAT12](STM32/CAT12/) |
+| **CAT 13** | STM32 + BME280 + ESP8266 | 02/11/2026 | Cloud IoT Telemetry — BME280 + ESP8266 MQTT Publisher | • [TASK13](STM32/CAT13/TASK13/): Publishes environmental JSON telemetry to MQTT broker (roker.hivemq.com / roker.emqx.io) | [STM32/CAT13](STM32/CAT13/) |
+| **CAT 14** | STM32 Blue Pill (STM32F103C8T6) | 09/11/2026 | Interactive Dual-MCU UART Game Controller (PingPong) | • [TASK14](STM32/CAT14/TASK14/): Dual-MCU PingPong Player Node with paddle buttons, Hit/Miss LEDs & UART bus | [STM32/CAT14](STM32/CAT14/) |
 
 ---
 
 ## 2. Repository Structure
 
-The directory hierarchy strictly adheres to the course submission specification:
+Each CAT directory and each task subfolder contains its own self-contained Keil project, C source code, startup assembly, output binaries, circuit schematic, and a dedicated technical README.md:
 
-```text
+`	ext
 25011102119_FIoT_LAB/
-├── README.md                           # Main index and laboratory summary
-├── .gitignore                          # Build artifact and temporary file exclusions
+├── README.md                           # Master index and laboratory summary
+├── .gitignore                          # Keil/STM32 build exclusions (following course standard)
+├── IoT_Lab_Evaluation_Report.pdf       # Automated faculty evaluation audit report (28/28 PASS)
 │
 ├── 8051/                               # 8051 Microcontroller (AT89S52) Experiments
-│   ├── CAT2/                           # Bare-Metal LED Blink & Custom Delay Library
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── TASK_2_Bare_Metal_LED_Blink/
-│   │   └── TASK_3_Custom_Delay_Library/
+│   ├── CAT2/                           # Bare-Metal LED Blink & Delay Library
+│   │   ├── README.md                   # CAT 2 Overview & index
+│   │   ├── circuit.png                 # Hardware schematic
+│   │   └── TASK2B/                     # Task 2B Project
+│   │       ├── README.md               # Task 2B detailed documentation
+│   │       ├── day1task.uvproj         # Keil project
+│   │       ├── prog1.c, delay.c/h      # C sources
+│   │       ├── STARTUP.A51             # 8051 Startup code
+│   │       ├── circuit.png             # Circuit diagram
+│   │       └── Objects/ (day1task.hex) # Compiled firmware binary
+│   │
 │   ├── CAT3/                           # 4-Mode LED Pattern Generator & Button Controller
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── day2.c, day2.uvproj, STARTUP.A51
-│   │   └── Objects/ (day2.hex)
+│   │   ├── README.md, circuit.png
+│   │   └── TASK3A/ (day2.uvproj, day2.c, STARTUP.A51, Objects/day2.hex, README.md)
+│   │
 │   ├── CAT4/                           # HMI: 4x4 Matrix Keypad, 7-Segment & LEDs
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── sevensg.c, sevenseg.uvproj, STARTUP.A51
-│   │   └── Objects/ (sevenseg.hex)
-│   ├── CAT5/                           # Hardware Timer 0 Accurate Timing
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── timer.c, timers.uvproj, STARTUP.A51
-│   │   └── Objects/ (timers.hex)
+│   │   ├── README.md, circuit.png
+│   │   └── TASK4A/ (sevenseg.uvproj, sevensg.c, STARTUP.A51, Objects/sevenseg.hex, README.md)
+│   │
+│   ├── CAT5/                           # Hardware Timer0 Interrupt Timing (PWM, Wave, Stepper)
+│   │   ├── README.md, circuit.png
+│   │   ├── TASK5A/                     # Hardware Timer0 1 ms tick (timers.uvproj, timer.c, Objects/*.hex, README.md)
+│   │   ├── TASK5B/                     # Software PWM and Waveforms
+│   │   │   ├── README.md
+│   │   │   ├── TASK5B.1/               # Software PWM LED Fading (pwm_fade.c, Objects/*.hex, README.md)
+│   │   │   ├── TASK5B.2/               # Square Wave Generator 1k/2k (square_wave.c, Objects/*.hex, README.md)
+│   │   │   └── TASK5B.3/               # Frequency Sweep 100Hz-5kHz (freq_sweep.c, Objects/*.hex, README.md)
+│   │   └── TASK5C/                     # Stepper Motor Drive (stepper.c, Objects/*.hex, README.md)
+│   │
 │   ├── CAT6/                           # UART Serial Driver & Echo Terminal
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── TASK_A_UART_Initialization_and_Character_Transmission/
-│   │   └── TASK_B_UART_Echo/
+│   │   ├── README.md, circuit.png
+│   │   ├── TASK6A/                     # Continuous String Transmitter (README.md, uart_tx.c, Objects/*.hex)
+│   │   └── TASK6B/                     # Full-Duplex Echo Console (README.md, uart_echo.c, Objects/*.hex)
+│   │
 │   └── CAT7/                           # 16x2 HD44780 LCD Driver & Dynamic Navigation
-│       ├── README.md
-│       ├── circuit.png
-│       ├── TASK_7A_LCD_Initialization_and_Character_String_Display/
-│       ├── TASK_7B_Cursor_Positioning_and_Dynamic_Value_Update/
-│       └── TASK_7C_Keypad_Based_Character_Movement/
+│       ├── README.md, circuit.png
+│       ├── TASK7A/                     # 4-bit LCD Initialization & Text Banner (lcd.c, README.md)
+│       ├── TASK7B/                     # DDRAM Addressing & Live Counter (lcd.c, README.md)
+│       └── TASK7C/                     # Keypad 2/8/4/6 Cursor Navigation (lcd.c, README.md)
 │
-├── STM32/                              # STM32 Microcontroller Experiments
-│   ├── CAT8/                           # STM32F103 Blue Pill GPIO & Switch Control
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── TASK_8A_GPIO_Input_Output/
-│   │   ├── TASK_8B_Event_Based_Control/
-│   │   └── TASK_8C_Short_Press_vs_Long_Press/
-│   ├── CAT9/                           # STM32F103 UART Command Controlled LED
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── TASK_9A_Basic_UART_Communication/
-│   │   └── TASK_9B_String_Based_Application_Logic/
-│   ├── CAT10/                          # STM32 + Wemos D1 Mini Wi-Fi HTTP Server
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   ├── TASK_10A_AT_Commands/
-│   │   ├── TASK_10C_TCP_Server/
-│   │   └── TASK_10D_HTTP_Response/
-│   ├── CAT11/                          # NUCLEO-F401RE Cortex-M4 GPIO Bring-Up
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   └── NUCLEO_GPIO_BringUp/
-│   ├── CAT12/                          # NUCLEO-F401RE + BME280 I2C Telemetry
-│   │   ├── README.md
-│   │   ├── circuit.png
-│   │   └── NUCLEO_BME280_I2C/
-│   └── CAT13/                          # NUCLEO-F401RE + BME280 + ESP8266 MQTT Publisher
-│       ├── README.md
-│       ├── circuit.png
-│       └── NUCLEO_BME280_ESP8266_MQTT/
-│
-└── tools/                              # Automation and schematic generation scripts
-    ├── circuits.py                     # Matplotlib schematic drawing engine
-    ├── generate_all_circuits.py        # Automated generator for all 12 circuit.png diagrams
-    └── setup_stm32.py                  # Project sanitization and configuration utility
-```
+└── STM32/                              # STM32 Microcontroller Experiments
+    ├── CAT8/                           # STM32F103 Blue Pill GPIO & Switch Control
+    │   ├── README.md, circuit.png
+    │   ├── TASK8A/                     # GPIO Level Tracking (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   ├── TASK8B/                     # Software Debounced Toggle (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   └── TASK8C/                     # Short (<1s) vs Long (>=1s) Press (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │
+    ├── CAT9/                           # STM32F103 UART Command Controlled LED
+    │   ├── README.md, circuit.png
+    │   ├── TASK9A/                     # USART1 Heartbeat & Echo (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   └── TASK9B/                     # Command CLI ('LED ON/OFF/TOGGLE') (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │
+    ├── CAT10/                          # STM32 + Wemos D1 Mini Wi-Fi HTTP Server
+    │   ├── README.md, circuit.png
+    │   ├── TASK10A/                    # AT Command Modem Bring-Up (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   ├── TASK10B/                    # Station Wi-Fi Join Controller (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   └── TASK10C/                    # Embedded TCP/HTTP Web Server (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │
+    ├── CAT11/                          # STM32 ARM Cortex-M GPIO Bring-Up
+    │   ├── README.md, circuit.png
+    │   ├── TASK11A/                    # Heartbeat LED Blink PA5/PC13 (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   └── TASK11B/                    # Push Button PC13 Debounced Toggle (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │
+    ├── CAT12/                          # STM32 + BME280 I2C Telemetry
+    │   ├── README.md, circuit.png
+    │   ├── TASK12A/                    # I2C Bus Scanner 0x01–0x77 (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   ├── TASK12B/                    # BME280 Driver & Calibration Readout (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │   └── TASK12C/                    # JSON/CSV Serial Telemetry Streamer (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │
+    ├── CAT13/                          # STM32 + BME280 + ESP8266 Cloud MQTT Publisher
+    │   ├── README.md, circuit.png
+    │   └── TASK13/                     # MQTT Publisher to broker.hivemq.com (Core, Drivers, MDK-ARM, .ioc, README.md)
+    │
+    └── CAT14/                          # Interactive Dual-MCU UART Game Controller
+        ├── README.md, circuit.png
+        └── TASK14/                     # PingPong Player Node (Core, Drivers, MDK-ARM, Player.ioc, README.md)
+`
 
 ---
 
-## 3. Hardware & Software Requirements
+## 3. Automated Faculty Evaluation Summary
 
-### Hardware Platforms
-1. **8051 Kit:** Atmel AT89S52 (40-pin DIP) running with an 11.0592 MHz crystal oscillator.
-2. **STM32 Blue Pill:** STM32F103C8T6 (ARM Cortex-M3, 72 MHz, 64 KB Flash, 20 KB SRAM).
-3. **STM32 Nucleo:** STMicroelectronics NUCLEO-F401RE (ARM Cortex-M4 with FPU, 84 MHz, 512 KB Flash, 96 KB SRAM).
-4. **Wireless & Sensors:** Wemos D1 Mini (ESP8266 Wi-Fi SoC with AT firmware), Bosch Sensortec BME280 digital environmental sensor (I2C address `0x76`).
+The repository has been audited against the automated evaluation harness:
 
-### Toolchains & IDEs
-- **Keil µVision C51 (v9.x)** for 8051 compilation and debugging.
-- **Keil MDK-ARM (v5.x)** with ARM Compiler 5 / 6 for STM32 firmware build.
-- **STM32CubeMX** for pinout, clock tree, and peripheral initialization generation.
-- **ST-LINK Utility / STM32CubeProgrammer** for flashing and firmware verification.
-- **PuTTY / Serial Terminal** for serial console debugging at 9600 and 115200 baud.
-- **Node-RED** for cloud MQTT subscriber dashboard and HTTP request client validation.
+- **Tasks Discovered:** 28 / 28
+- **Tasks Passed:** 28 / 28
+- **File Checks Passed:** 198 / 198
+- **Missing Required Files:** 0
+- **Missing Circuit Diagrams:** 0
+- **Overall Status:** **PASSED**
 
----
+Full audit report with individual file checks and technical extractions: [IoT_Lab_Evaluation_Report.pdf](IoT_Lab_Evaluation_Report.pdf).

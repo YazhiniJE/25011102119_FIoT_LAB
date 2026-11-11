@@ -1,13 +1,40 @@
-**/Objects/*
-!**/Objects/*.hex
-Listings/
-DebugConfig/
-**/RTE/_*/
-*.uvgui.* *.uvguix.* *.uvopt *.uvoptx
-*.obj *.o *.lst *.m51 *.map *.lnp *.axf *.htm *.dep *.d *.crf *.__i *.bak
-Debug/
-Release/
-.metadata/
+
+# Keil generated listing files
+**/Listings/
+
+# Keil generated object and build files
+**/Objects/*.obj
+**/Objects/*.lst
+**/Objects/*.m51
+**/Objects/*.abs
+**/Objects/*.omf
+**/Objects/*.lnp
+**/Objects/*.build_log.htm
+**/Objects/*.crf
+**/Objects/*.dep
+
+# User-specific Keil settings
+**/*.uvgui
+**/*.uvgui.*
+**/*.uvguix*
+**/*.uvopt
+**/*.uvoptx
+
+# Generated intermediate build files
+**/*.axf
+**/*.o
+**/*.d
+**/*.dep
+**/*.map
+**/*.elf
+
+# Generated build directories
+**/Debug/
+**/Release/
+
+# Operating system files
+Thumbs.db
+Desktop.ini
 .DS_Store
-__pycache__/
-*.pyc
+
+# Keep .hex firmware files tracked
