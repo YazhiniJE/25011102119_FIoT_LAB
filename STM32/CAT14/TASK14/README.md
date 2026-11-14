@@ -44,3 +44,44 @@ This candidate is a greeting publisher, not verified CAT14 assignment evidence. 
 Configuration correction: USART1 PA9/PA10 at 115200 baud, 8-N-1, initialized before ESP8266_Init. Configure Wi-Fi credentials locally. Existing F401RB device target retained; confirm physical board and assignment scope.
 
 Date note: no paper was available, so the date uses the original candidate lab file last-modified date. Experiment and task wording above report the absent requirements rather than invent a title.
+
+
+## Node-RED MQTT Subscriber Flow
+
+A Node-RED flow is provided in [flows.json](flows.json) to receive and display the MQTT messages published by the STM32.
+
+### MQTT Configuration
+
+| Parameter | Value |
+|---|---|
+| Broker | broker.emqx.io |
+| Port | 1883 |
+| Topic | stm32/data |
+| QoS | 0 |
+| Client ID | NodeRED_Subscriber_CAT14 |
+| Published Message | Good Morning |
+| Publish Interval | 1000 ms |
+
+### Flow Nodes
+
+1. **MQTT In** – Subscribes to `stm32/data` on `broker.emqx.io:1883`
+2. **Debug** – Displays raw incoming messages in the debug sidebar
+3. **Add Timestamp** – Attaches reception timestamp and running message count
+4. **Dashboard Text (Message)** – Displays the latest message from STM32
+5. **Dashboard Text (Timestamp)** – Shows when the last message was received
+6. **Dashboard Text (Count)** – Shows total messages received
+
+### How to Import
+
+1. Open Node-RED in a browser (`http://localhost:1880`).
+2. Click the menu (top right) and select **Import**.
+3. Click **Select a file to import** and choose `flows.json`.
+4. Click **Import** and then **Deploy**.
+5. Open the Dashboard at `http://localhost:1880/ui`.
+6. The dashboard displays the latest `Good Morning` message, timestamp and count.
+
+### Required Node-RED Palettes
+
+- `node-red-dashboard` (for `ui_text`, `ui_group`, `ui_tab` nodes)
+
+Install via: **Menu → Manage Palette → Install → search `node-red-dashboard`**

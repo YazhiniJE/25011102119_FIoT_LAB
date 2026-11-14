@@ -110,7 +110,7 @@ static void MX_USART2_UART_Init(void);
 	}
 	}
 
-void send_http_response(void)
+void send_http_response(int conn_id)
 {
     counter++;
 
@@ -129,7 +129,7 @@ void send_http_response(void)
             "%s",
             (int)strlen(body), body);
 
-    sprintf(cmd, "AT+CIPSEND=0,%d\r\n", (int)strlen(response));
+    sprintf(cmd, "AT+CIPSEND=%d,%d\r\n", conn_id, (int)strlen(response));
 
     HAL_UART_Transmit(&huart2, (uint8_t *)cmd, strlen(cmd), 1000);
 
@@ -143,7 +143,9 @@ void send_http_response(void)
 
     receive_response();
 
-    HAL_UART_Transmit(&huart2, (uint8_t *)"AT+CIPCLOSE=0\r\n", 15, 1000);
+    sprintf(cmd, "AT+CIPCLOSE=%d\r\n", conn_id);
+    HAL_UART_Transmit(&huart2, (uint8_t *)cmd, strlen(cmd), 1000);
+    receive_response();
 }
 
 
@@ -210,7 +212,36 @@ while (1)
 
     /* USER CODE BEGIN 3 */
 
-    HAL_Delay(1000);
+    if (HAL_UART_Receive(&huart2, &rx_char, 1, 100) == HAL_OK)
+    {
+        if (array_index < sizeof(rx_data) - 1)
+        {
+            rx_data[array_index++] = rx_char;
+            rx_data[array_index] = '\0';
+        }
+        else
+        {
+            /* Buffer full - reset to avoid overflow */
+            clear_buffer();
+        }
+
+        /* Detect incoming +IPD client connection with HTTP GET request */
+        if (strstr((char *)rx_data, "+IPD,") != NULL &&
+            strstr((char *)rx_data, "GET /") != NULL)
+        {
+            /* Extract connection ID from +IPD,<id>,<len>: format */
+            char *ipd_ptr = strstr((char *)rx_data, "+IPD,");
+            if (ipd_ptr != NULL)
+            {
+                int conn_id = ipd_ptr[5] - '0'; /* Single digit connection ID */
+
+                /* Build and send HTTP response */
+                send_http_response(conn_id);
+            }
+
+            clear_buffer();
+        }
+    }
 }
 /* USER CODE END 3 */
 }
