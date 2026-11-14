@@ -1,0 +1,28 @@
+--cpu=Cortex-M4.fp.sp
+"weather_mqtt\startup_stm32f401xe.o"
+"weather_mqtt\bme280.o"
+"weather_mqtt\esplib.o"
+"weather_mqtt\main.o"
+"weather_mqtt\stm32f4xx_it.o"
+"weather_mqtt\stm32f4xx_hal_msp.o"
+"weather_mqtt\stm32f4xx_hal_i2c.o"
+"weather_mqtt\stm32f4xx_hal_i2c_ex.o"
+"weather_mqtt\stm32f4xx_hal_rcc.o"
+"weather_mqtt\stm32f4xx_hal_rcc_ex.o"
+"weather_mqtt\stm32f4xx_hal_flash.o"
+"weather_mqtt\stm32f4xx_hal_flash_ex.o"
+"weather_mqtt\stm32f4xx_hal_flash_ramfunc.o"
+"weather_mqtt\stm32f4xx_hal_gpio.o"
+"weather_mqtt\stm32f4xx_hal_dma_ex.o"
+"weather_mqtt\stm32f4xx_hal_dma.o"
+"weather_mqtt\stm32f4xx_hal_pwr.o"
+"weather_mqtt\stm32f4xx_hal_pwr_ex.o"
+"weather_mqtt\stm32f4xx_hal_cortex.o"
+"weather_mqtt\stm32f4xx_hal.o"
+"weather_mqtt\stm32f4xx_hal_exti.o"
+"weather_mqtt\stm32f4xx_hal_uart.o"
+"weather_mqtt\system_stm32f4xx.o"
+--strict --scatter "Weather_MQTT\Weather_MQTT.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Weather_MQTT.map" -o Weather_MQTT\Weather_MQTT.axf
