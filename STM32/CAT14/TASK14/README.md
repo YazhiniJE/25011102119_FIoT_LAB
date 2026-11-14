@@ -1,45 +1,46 @@
-# CAT14 TASK14: Interactive Dual-MCU UART Game Controller (PingPong Player Node)
+EXPERIMENT DETAILS
+EXP: CONTINUOUS ASSESMENT 14
+DATE: 14/11/2026
+NAME OF EXP: CAT14 paper not supplied
+HARDWARE SETUP / PLATFORM: STM32F401RB development board (physical board unconfirmed) + STM32F401RBT6 + ESP8266 + STM32CubeMX (MDK-ARM project)
+TASK 14 : CAT14 requirements not supplied
 
-**Course:** 25CS2741 Fundamentals of Internet of Things + Lab  
-**Student:** Yazhini J E (Reg No: 25011102119)  
-**Institution:** Shiv Nadar University Chennai  
-**Date:** 09/11/2026  
-**Platform:** STM32F103C8T6 (Blue Pill ARM Cortex-M3)  
-**Core Clock:** 72 MHz  
+1. Circuit Diagram
+Publish the greeting every second after UART initialization to demonstrate 14 with the shown signals.
 
----
+* Microcontroller / Board: STM32F401RB development board (physical board unconfirmed) + STM32F401RBT6.
+* GPIO / Peripheral pins: PA9 / USART1_TX -> ESP8266 RX; PA10 / USART1_RX -> ESP8266 TX.
+* Clock: HSI 16 MHz PLL to 84 MHz.
+* External components / Peripheral: ESP8266 RX; ESP8266 TX.
+* Power Supply: 3.3 V board logic, common ground; board regulator / USB supply.
 
-## 1. Overview & Objectives
-This project implements the dedicated Player Node for an interactive dual-MCU networked PingPong game system. Built upon Yazhini's original hardware and Keil implementation, the STM32F103C8T6 interfaces with push-button controls (Paddle UP / DOWN), status indicators (Hit / Miss LEDs), and communicates with the opponent MCU over a full-duplex UART game bus at 115200 baud.
-
----
-
-## 2. Hardware Pinout Table
-| STM32 Pin | Function | Hardware Connection | Description |
-|---|---|---|---|
-| **PA0** | GPIO Input (Pull-Up) | Push Button UP | Moves paddle upwards |
-| **PA1** | GPIO Input (Pull-Up) | Push Button DOWN | Moves paddle downwards |
-| **PC13** | GPIO Output | Hit / Status LED | Indicates successful ball return |
-| **PA4** | GPIO Output | Miss / Penalty LED | Indicates missed ball / game loss |
-| **PA9 / PA10** | USART1 TX / RX | Game Bus Interconnect | Transmits paddle movements & hits |
-
----
-
-## 3. Game State Machine & Packet Protocol
-The player node runs a real-time event loop processing inputs and incoming game packets:
-- **`[MOVE_UP]` / `[MOVE_DN]`**: Transmitted upon button press to update paddle position on host/display MCU.
-- **`[BALL_INCOMING]`**: Received when the ball enters the player's court. If paddle position matches ball trajectory, sends `[HIT]` and flashes Hit LED (`PC13`).
-- **`[MISS]`**: Triggered if paddle misses the incoming ball; illuminates Miss LED (`PA4`).
-
----
-
-## 4. Circuit Schematic
 ![Circuit Diagram](circuit.png)
 
----
+2. Core Logic / Pseudocode / Code Base
+Working Principle: The candidate source connects an ESP library client and publishes Good Morning on stm32/data. The USART1 handle and startup initialization are now provided before ESP setup.
 
-## 5. Build, Flashing & Execution
-1. Open `MDK-ARM/Player.uvprojx` in Keil µVision.
-2. Build project (`F7`) to compile source files.
-3. Flash the STM32F103 Blue Pill using ST-LINK V2 (`F8`).
-4. Interconnect USART TX/RX pins with the opponent game node and participate in real-time interactive gameplay.
+Pseudocode:
+
+1. Initialize HAL, the stored clock and GPIO.
+2. Initialize USART1 and use huart1 for the saved ESP connection sequence.
+3. Connect the MQTT client to the broker stored in the source.
+4. Publish the greeting every second after the UART setup is supplied.
+
+Code Base:
+The program is written in Embedded C using STM32 HAL (STM32CubeMX).
+
+* `main.h` provides the project HAL declarations in this program.
+* `ESPLib.h` declares the own ESP and MQTT library interface in this program.
+* `ESP8266_Init()` tests and configures the ESP station interface here.
+* `ESP8266_wifiConnect()` sends the saved access-point connection settings here.
+* `ESP8266_portConnect()` opens the stored TCP broker connection here.
+* `MQTT_connectBroker()` sends the MQTT client connection packet here.
+* `MQTT_publishTopic()` sends the topic and application payload through the ESP library here.
+* `HAL_Delay()` waits for the programmed millisecond interval here.
+
+3. Inference
+This candidate is a greeting publisher, not verified CAT14 assignment evidence. The missing paper prevents title and scope verification, and target build and hardware communication remain unverified.
+
+Configuration correction: USART1 PA9/PA10 at 115200 baud, 8-N-1, initialized before ESP8266_Init. Configure Wi-Fi credentials locally. Existing F401RB device target retained; confirm physical board and assignment scope.
+
+Date note: no paper was available, so the date uses the original candidate lab file last-modified date. Experiment and task wording above report the absent requirements rather than invent a title.
