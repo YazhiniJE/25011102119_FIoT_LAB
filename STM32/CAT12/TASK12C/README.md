@@ -1,25 +1,40 @@
-# TASK12C – Short-Press and Long-Press Detection
+EXPERIMENT DETAILS
+EXP: CONTINUOUS ASSESSMENT 12
+DATE: 14/10/2026
+NAME OF EXP: STM32F401RE Cortex-M4: GPIO and User Input Programming
+HARDWARE SETUP / PLATFORM: STM32F401RB development board (physical board unconfirmed) + STM32F401RBT6 + GPIO LED and input + STM32CubeMX (MDK-ARM project)
+TASK 12C : Short-Press and Long-Press Detection
 
-## Experiment Details
+1. Circuit Diagram
+Service the half-second blink interval while continuing to read the switch to demonstrate 12C with the shown signals.
 
-**EXP:** CONTINUOUS ASSESSMENT 12 – TASK C
-**DATE:** 23/10/2026
-**NAME:** STM32F401RE Cortex-M4: GPIO and User Input Programming
-**PLATFORM:** ST NUCLEO-F401RE (STM32F401RET6, ARM Cortex-M4 @ 84 MHz)
+* Microcontroller / Board: STM32F401RB development board (physical board unconfirmed) + STM32F401RBT6.
+* GPIO / Peripheral pins: PC13 / GPIOC GPIO_PIN_13 -> B1 button to GND, pull-up; PA5 / GPIOA GPIO_PIN_5 -> LED + 330 ohm to GND.
+* Clock: HSI 16 MHz PLL to 84 MHz.
+* External components / Peripheral: B1 button to GND, pull-up; LED + 330 ohm to GND.
+* Power Supply: 3.3 V board logic, common ground; board regulator / USB supply.
 
-## Objective
+![Circuit Diagram](circuit.png)
 
-Discriminate between short press (30–500 ms) and long press (≥500 ms) on the
-on-board button (PC13) to control two distinct LED (PA5) behaviours.
+2. Core Logic / Pseudocode / Code Base
+Working Principle: This USER CODE measures the interval between stable PC13 press and release events. It starts a timed PA5 blink after a long press and stops blinking with a toggle after a short press.
 
-## Working Principle
+Pseudocode:
 
-Button press duration is measured using `HAL_GetTick()` timestamps.
-- **Short press (30–500 ms):** Toggles and latches LED state.
-- **Long press (≥500 ms):** Enters rapid auto-blink mode (200 ms period).
-  A subsequent short press cancels blink mode and restores manual control.
+1. Qualify the button level with elapsed ticks.
+2. Save started on a low input event.
+3. Use a one-second threshold on release.
+4. Service the half-second blink interval while continuing to read the switch.
 
-## Project Files
+Code Base:
+The program is written in Embedded C using STM32 HAL (STM32CubeMX).
 
-- `Core/Src/main.c` – Duration classifier, non-blocking blink scheduler
-- `Led-Blink.ioc` – STM32CubeMX configuration
+* `main.h` provides the project HAL declarations in this program.
+* `HAL_GetTick()` returns the millisecond time used for event comparisons here.
+* `HAL_GPIO_ReadPin()` reads the application switch level here.
+* `HAL_GPIO_TogglePin()` changes the stored LED output state here.
+
+3. Inference
+The intended behavior combines press classification with a separate blink timer. PA5 and PC13 GPIO setup has been added; hardware testing remains pending.
+
+Configuration correction: PA5 push-pull output, initial LOW, PC13 input with pull-up (active LOW assumed). The existing STM32F401RB target is retained until the actual board is confirmed; if using NUCLEO-F401RE, migrate the project to that target in CubeMX/Keil. No target build or hardware test performed.

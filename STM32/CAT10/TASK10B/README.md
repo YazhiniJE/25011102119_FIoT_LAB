@@ -1,23 +1,41 @@
-# TASK10B – ESP8266 AT Command Interface
+EXPERIMENT DETAILS
+EXP: CONTINUOUS ASSESMENT 10
+DATE: 05/10/2026
+NAME OF EXP: STM32–Wemos Wi-Fi Modem Interface Using AT Commands
+HARDWARE SETUP / PLATFORM: Blue Pill development board + STM32F103C8T6 + ESP8266 + STM32CubeMX (MDK-ARM project)
+TASK 10B : Explore the ESP8266 AT Command Interface
 
-## Experiment Details
+1. Circuit Diagram
+For each command, copy the received bytes to the terminal until timeout to demonstrate 10B with the shown signals.
 
-**EXP:** CONTINUOUS ASSESSMENT 10 – TASK B
-**DATE:** 12/10/2026
-**NAME:** STM32–Wemos Wi-Fi Modem Interface Using AT Commands
-**PLATFORM:** STM32 Blue Pill (STM32F103C8T6) + Wemos D1 Mini (ESP8266)
+* Microcontroller / Board: Blue Pill development board + STM32F103C8T6.
+* GPIO / Peripheral pins: PA9 / USART1_TX -> ESP8266 / Wemos RX; PA10 / USART1_RX -> ESP8266 / Wemos TX; PA2 / USART2_TX -> USB-UART RX -> PC terminal.
+* Clock: HSE 8 MHz crystal on PD0-OSC_IN/PD1-OSC_OUT; PLL x9, SYSCLK 72 MHz.
+* External components / Peripheral: ESP8266 / Wemos RX; ESP8266 / Wemos TX; USB-UART RX -> PC terminal.
+* Power Supply: 3.3 V board logic, common ground; board regulator / USB supply.
 
-## Objective
+![Circuit Diagram](circuit.png)
 
-Exercise the full AT command set on the ESP8266 Wi-Fi modem:
-set station mode, connect to an access point, and retrieve the assigned IP address.
+2. Core Logic / Pseudocode / Code Base
+Working Principle: send_command transmits each investigation command and forwards modem responses to the PC UART. The startup sequence asks about firmware, station mode, visible networks, current association and IP information.
 
-## Working Principle
+Pseudocode:
 
-The STM32 sequences AT commands (`AT+CWMODE=1`, `AT+CWJAP`, `AT+CIFSR`) over USART2
-and logs responses via USART1 to a PC terminal, exercising the AT command interface.
+1. Initialize the two UARTs.
+2. Send AT, AT+GMR and AT+CWMODE=1.
+3. Send AT+CWLAP, AT+CWJAP? and AT+CIFSR.
+4. For each command, copy the received bytes to the terminal until timeout.
 
-## Project Files
+Code Base:
+The program is written in Embedded C using STM32 HAL (STM32CubeMX).
 
-- `Core/Src/main.c` – AT command sequencer
-- `Wemos.ioc` – STM32CubeMX configuration
+* `main.h` provides the project HAL declarations in this program.
+* `string.h` provides string length, comparison and buffer functions in this program.
+* `string.h` provides string length, comparison and buffer functions in this program.
+* `send_command()` sends an AT command and forwards its reply to the PC UART here.
+* `HAL_UART_Transmit()` sends bytes on the selected UART handle here.
+* `strlen()` counts actual string bytes for serial or HTTP length here.
+* `HAL_UART_Receive()` receives bytes with the requested timeout here.
+
+3. Inference
+The terminal receives the modem information that its firmware supports. The sequence demonstrates AT command investigation; it does not assert that the modem is connected to an access point.
