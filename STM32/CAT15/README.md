@@ -92,26 +92,35 @@ Concurrent regional meteorological baseline for Chennai city:
 
 ![Node-RED Flow Architecture](nodered_flow.png)
 
-*Figure 3: Node-RED stream processing pipeline showing dual data acquisition streams, formatting logic, drying time estimator rule engine, and dashboard routing.*
+*Figure 3: Node-RED stream processing pipeline showing dual MQTT/HTTP ingestion branches, Drying Time & Formatting rule engine, OpenWeatherMap Chennai branch, and dashboard widget routing.*
 
 ### Flow Components & Processing Steps
-1. **Local Sensor Ingestion Pipeline (Top Branch):**
-   * `Every 10 s` Inject Node triggers periodic polling of the ESP8266 gateway.
-   * `Sensor node (ESP8266)` HTTP/MQTT request node captures the raw sensor response.
-   * `Parse sensor reply` Function Node deserializes JSON into `temperature`, `pressure`, and `humidity` payloads and fans out across multiple outputs:
-     * Outputs 1, 2, 3 route to `Local Temperature`, `Local Pressure`, and `Local Humidity` UI gauge nodes.
-     * Output 4 routes to the `Drying time estimator` rule engine.
-     * Output 5 routes to `Chart feed: 1 per minute` delay/rate-limiter node &rarr; `Split for charts` &rarr; multi-series chart widgets.
-2. **Drying Time Estimator Rule Engine:**
-   * Receives normalized temperature and humidity.
-   * Evaluates empirical drying formulas based on ambient vapor pressure deficit ($VPD$) and fabric moisture regain factors.
-   * Emits formatted duration strings (`3 h 19 min`, `1 h 40 min`, `1 h 15 min`) to UI text cards for Cotton, Polyester, and Nylon.
-3. **Regional Weather API Ingestion Pipeline (Bottom Branch):**
-   * `Every 10 min` Inject Node triggers the baseline weather query.
-   * `Build OpenWeather URL` constructs the REST request with Chennai coordinates and API parameters.
-   * `OpenWeather` HTTP Request Node queries the external OpenWeather API service.
-   * `Parse Chennai weather` extracts `main.temp`, `main.pressure`, and `main.humidity`.
-   * Telemetry routes to `Chennai Temperature`, `Chennai Pressure`, and `Chennai Humidity` gauges, as well as the shared multi-series charts.
+
+**Top Branch — Local BME280 Sensor via MQTT:**
+1. `BME280 MQTT` (`mqtt in`) node subscribes to topic `/yazhini` on `broker.emqx.io:1883` and receives JSON telemetry: `{"status":"success","temperature":XX,"humidity":XX,"pressure":XX}`.
+2. An `inject` node provides test payload (temperature 23.95 °C, humidity 70.46 %, pressure 1016.44 hPa) for offline debugging without live hardware.
+3. `Drying Time & Formatting` (8-output Function Node) validates the payload, normalizes pressure if raw Pa > 2000, computes a humidity/temperature drying factor, and routes:
+   - **Port 0 (top):** `val(t)` → `Temperature` text widget (Live Temperature display) + `debug 3`
+   - **Port 1:** `val(t)` → `Temp Gauge` (UI gauge, 0–50 °C)
+   - **Port 2:** `val(h)` → `Humidity Gauge` (UI gauge, 0–100 %)
+   - **Port 3:** `{payload:t, topic:'Temperature (°C)'}` → `Temp History` (time-series chart)
+   - **Port 4:** `hours(4.5)` → `Cotton Time` text widget
+   - **Port 5:** `hours(1.5)` → `Nylon Time` text widget
+   - **Port 6:** `hours(2)` → `Polyester Time` text widget
+   - **Port 7 (bottom):** `val(pr)` → `Pressure` gauge (UI gauge, 950–1050 hPa)
+4. `debug 2` node captures the raw MQTT payload for troubleshooting.
+
+**Bottom Branch — Chennai OpenWeather API:**
+1. `inject openapi` node fires immediately on deploy, then repeats every 10 minutes (600 s).
+2. `OpenWeatherMap Chennai` (`http request`) node fetches live JSON from `api.openweathermap.org` for Chennai, IN.
+3. `Extract OWM Data` (4-output Function Node) validates `main.temp`, `main.humidity`, `main.pressure` and routes:
+   - **Port 0 (top):** `Condition: <description>` → `Chennai Weather Display` text widget
+   - **Port 1:** Chennai temperature → `Temperature` gauge (Chennai group)
+   - **Port 2:** Chennai humidity → `Humidity` gauge (Chennai group)
+   - **Port 3:** Chennai pressure → `Pressure` gauge (Chennai group)
+4. `debug 4` node captures the raw OWM HTTP response for troubleshooting.
+
+**Node-RED Flow JSON:** [`flow.json`](flow.json) — ready to import directly into Node-RED via *Import → Clipboard*.
 
 ---
 
@@ -124,6 +133,9 @@ The complete Keil µVision project workspace, CubeMX `.ioc` hardware configurati
   - Keil Project Workspace: [`MDK-ARM/Weather_MQTT.uvprojx`](TASK15/MDK-ARM/Weather_MQTT.uvprojx)
   - Primary Firmware: [`Core/Src/main.c`](TASK15/Core/Src/main.c)
   - Bosch BME280 Driver: [`Core/Src/bme280.c`](TASK15/Core/Src/bme280.c) / [`Core/Inc/bme280.h`](TASK15/Core/Inc/bme280.h)
+  - Node-RED Flow: [`flow.json`](TASK15/flow.json)
+
+- **Node-RED Flow JSON (root CAT15):** [`flow.json`](flow.json) — import via Node-RED → *Hamburger Menu → Import → Clipboard*
 
 ---
 

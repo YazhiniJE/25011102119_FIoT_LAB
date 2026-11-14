@@ -130,25 +130,41 @@ The firmware coordinates modem operations using a deterministic state sequence:
 
 ![Node-RED Flow Architecture](nodered_flow.png)
 
-*Figure 2: Node-RED visual flow pipeline.*
+*Figure 2: Node-RED visual flow pipeline — dual BME280 MQTT and OpenWeatherMap HTTP ingestion branches with Drying Time & Formatting rule engine and dashboard widget routing.*
 
 ### Pipeline Architecture Details
-1. **Sensor Ingestion:** Periodic inject node (`Every 10 s`) triggers the `Sensor node (ESP8266)` request node. The JSON payload is routed into `Parse sensor reply`.
-2. **Gauge Display:** Real-time metrics are routed to `Local Temperature`, `Local Pressure`, and `Local Humidity` gauges.
-3. **Drying Time Estimator (Advisory Engine):**
+
+**Top Branch — BME280 Sensor via MQTT:**
+1. `BME280 MQTT` (`mqtt in`) subscribes to topic `/yazhini` on `broker.emqx.io:1883` and receives JSON: `{"status":"success","temperature":XX,"humidity":XX,"pressure":XX}`.
+2. An `inject` node provides offline test payload (temperature: 23.95 °C, humidity: 70.46 %, pressure: 1016.44 hPa) for validation without live hardware.
+3. `Drying Time & Formatting` (8-output Function Node) validates, normalizes, and routes data:
+   - **Port 0:** `val(t)` → `Temperature` text (Live Temperature display) + `debug 3`
+   - **Port 1:** `val(t)` → `Temp Gauge` (UI gauge, 0–50 °C)
+   - **Port 2:** `val(h)` → `Humidity Gauge` (UI gauge, 0–100 %)
+   - **Port 3:** `{payload:t, topic:'Temperature (°C)'}` → `Temp History` (time-series chart)
+   - **Port 4:** `hours(4.5)` → `Cotton Time` text widget
+   - **Port 5:** `hours(1.5)` → `Nylon Time` text widget
+   - **Port 6:** `hours(2)` → `Polyester Time` text widget
+   - **Port 7:** `val(pr)` → `Pressure` gauge (UI gauge, 950–1050 hPa)
+4. **Drying Time Estimator (Advisory Engine):**
    * Uses evaporative physics where drying rate is proportional to ambient vapor pressure deficit:
      $$\text{Drying Time} \propto \frac{k_{\text{fabric}}}{(1 - \text{RH}/100) \cdot f(T)}$$
    * At $T = 31.2^\circ\text{C}$ and $\text{RH} = 58\%$:
      * **Cotton:** `3 h 19 min`
      * **Polyester:** `1 h 40 min`
      * **Nylon:** `1 h 15 min`
-4. **Rate Limiting & Multi-Series Trends:**
-   * A delay node (`Chart feed: 1 per minute`) prevents UI chart clutter.
-   * `Split for charts` dispatches points to `Chart Temperature`, `Chart Pressure`, and `Chart Humidity`.
-5. **OpenWeather Regional Ingestion:**
-   * A 10-minute timer (`Every 10 min`) triggers `Build OpenWeather URL`.
-   * HTTP request node queries OpenWeather endpoint for Chennai.
-   * `Parse Chennai weather` routes regional metrics to city gauges and parallel inputs of the comparison charts.
+
+**Bottom Branch — OpenWeather Regional Ingestion:**
+1. `inject openapi` fires immediately on deploy and repeats every 10 minutes (600 s).
+2. `OpenWeatherMap Chennai` HTTP request node fetches JSON for Chennai, IN.
+3. `Extract OWM Data` (4-output Function Node) validates and routes:
+   - **Port 0:** Weather condition string → `Chennai Weather Display`
+   - **Port 1:** Chennai temperature → `Temperature` gauge (Chennai group)
+   - **Port 2:** Chennai humidity → `Humidity` gauge (Chennai group)
+   - **Port 3:** Chennai pressure → `Pressure` gauge (Chennai group)
+4. `debug 4` captures raw OWM HTTP response for troubleshooting.
+
+**Node-RED Flow JSON:** [`flow.json`](flow.json) — ready to import directly into Node-RED.
 
 ---
 

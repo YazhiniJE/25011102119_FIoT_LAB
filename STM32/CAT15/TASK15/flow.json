@@ -1,0 +1,817 @@
+[
+    {
+        "id": "f813a006250e1dc9",
+        "type": "tab",
+        "label": "Smart Dryer - Fixed",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "68304e079b182392",
+        "type": "debug",
+        "z": "f813a006250e1dc9",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "16b8495a3602a3a5",
+        "type": "inject",
+        "z": "f813a006250e1dc9",
+        "name": "inject openapi",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "600",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 460,
+        "y": 780,
+        "wires": [
+            [
+                "23c2331b0a91f54a"
+            ]
+        ]
+    },
+    {
+        "id": "23c2331b0a91f54a",
+        "type": "http request",
+        "z": "f813a006250e1dc9",
+        "name": "OpenWeatherMap Chennai",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openweathermap.org/data/2.5/weather?q=Chennai,IN&units=metric&appid=ef99c7ed8013479bf414712cb812a3a0",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 680,
+        "y": 780,
+        "wires": [
+            [
+                "cb9db83edfda07e9",
+                "24ecfacc8431e252"
+            ]
+        ]
+    },
+    {
+        "id": "bf48d563aacf9a2e",
+        "type": "function",
+        "z": "f813a006250e1dc9",
+        "name": "Drying Time & Formatting",
+        "func": "let p = msg.payload;\nif (typeof p === 'string') { try { p = JSON.parse(p); } catch(e) { node.warn('Invalid sensor JSON'); return null; } }\nif (!p || ['temperature','humidity','pressure'].some(k => p[k] == null || p[k] === '' || !Number.isFinite(Number(p[k])))) { node.warn('Incomplete sensor readings'); return null; }\nlet t = Number(p.temperature), h = Number(p.humidity), pr = Number(p.pressure);\nif (pr > 2000) pr /= 100;\nif (h < 0 || h > 100 || pr <= 0) return null;\nlet factor = Math.max(0.4,h/60)*Math.max(0.5,28/Math.max(t,1));\nlet val = x => ({payload:x});\nlet hours = x => val('~'+(x*factor).toFixed(1)+' hours');\nreturn [val(t), val(t), val(h), {payload:t,topic:'Temperature (\u00b0C)'}, hours(4.5), hours(1.5), hours(2), val(pr)];",
+        "outputs": 8,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 560,
+        "wires": [
+            [
+                "3e95647a56238922",
+                "4022bc244ae23eee"
+            ],
+            [
+                "fcb9350e0daec9c1"
+            ],
+            [
+                "8020ae2d991561d5"
+            ],
+            [
+                "cbf8b273540adacc"
+            ],
+            [
+                "be97489608211b6b"
+            ],
+            [
+                "666618185cc0df5d"
+            ],
+            [
+                "ab3d23b1ce260815"
+            ],
+            [
+                "8f16f3cc2e5fcc6b"
+            ]
+        ]
+    },
+    {
+        "id": "fcb9350e0daec9c1",
+        "type": "ui-gauge",
+        "z": "f813a006250e1dc9",
+        "name": "Temp Gauge",
+        "group": "f7898b3433968c9b",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 2,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Temperature",
+        "alwaysShowTitle": true,
+        "units": "\u00b0C",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#00b5ad",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "25",
+                "color": "#21ba45",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "40",
+                "color": "#f2711c",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "0",
+        "max": "50",
+        "sizeThickness": "",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
+        "className": "",
+        "x": 1250,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8020ae2d991561d5",
+        "type": "ui-gauge",
+        "z": "f813a006250e1dc9",
+        "name": "Humidity Gauge",
+        "group": "f7898b3433968c9b",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 2,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": true,
+        "units": "%",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#fbbd08",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "40",
+                "color": "#21ba45",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "80",
+                "color": "#db2828",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
+        "className": "",
+        "x": 1250,
+        "y": 530,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cbf8b273540adacc",
+        "type": "ui-chart",
+        "z": "f813a006250e1dc9",
+        "group": "f7898b3433968c9b",
+        "name": "Temp History",
+        "label": "Temperature Trend History",
+        "order": 4,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "property",
+        "ymin": "0",
+        "ymax": "50",
+        "bins": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointRadius": "",
+        "showLegend": true,
+        "removeOlder": "",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": 3,
+        "className": "",
+        "interpolation": "linear",
+        "x": 1250,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "be97489608211b6b",
+        "type": "ui-text",
+        "z": "f813a006250e1dc9",
+        "group": "68c0493a53185cf9",
+        "order": 1,
+        "width": 4,
+        "height": 1,
+        "name": "Cotton Time",
+        "label": "Cotton Garments",
+        "format": "{{msg.payload}}",
+        "layout": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1250,
+        "y": 630,
+        "wires": []
+    },
+    {
+        "id": "cb9db83edfda07e9",
+        "type": "function",
+        "z": "f813a006250e1dc9",
+        "name": "Extract OWM Data",
+        "func": "let p = msg.payload;\nif (!p || !p.main || ['temp','humidity','pressure'].some(k => p.main[k] == null || !Number.isFinite(Number(p.main[k])))) { node.warn('OpenWeather response missing weather data'); return null; }\nlet m = p.main;\nreturn [{payload:'Condition: '+(p.weather?.[0]?.description || 'Unavailable')}, {payload:Number(m.temp)}, {payload:Number(m.humidity)}, {payload:Number(m.pressure)}];",
+        "outputs": 4,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 780,
+        "wires": [
+            [
+                "45963bf3128cb277"
+            ],
+            [
+                "175ecd3f4cbf4b2f"
+            ],
+            [
+                "7478bdce1e685ae2"
+            ],
+            [
+                "a620fc47b282d5f4"
+            ]
+        ]
+    },
+    {
+        "id": "45963bf3128cb277",
+        "type": "ui-text",
+        "z": "f813a006250e1dc9",
+        "group": "c97a308436fc912d",
+        "order": 4,
+        "width": 6,
+        "height": 2,
+        "name": "Chennai Weather Display",
+        "label": "Current conditions",
+        "format": "{{msg.payload}}",
+        "layout": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1230,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "666618185cc0df5d",
+        "type": "ui-text",
+        "z": "f813a006250e1dc9",
+        "group": "68c0493a53185cf9",
+        "order": 2,
+        "width": 4,
+        "height": 1,
+        "name": "Nylon Time",
+        "label": "Nylon Garments",
+        "format": "{{msg.payload}}",
+        "layout": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1250,
+        "y": 670,
+        "wires": []
+    },
+    {
+        "id": "ab3d23b1ce260815",
+        "type": "ui-text",
+        "z": "f813a006250e1dc9",
+        "group": "68c0493a53185cf9",
+        "order": 3,
+        "width": 4,
+        "height": 1,
+        "name": "Polyester Time",
+        "label": "Polyester Garments",
+        "format": "{{msg.payload}}",
+        "layout": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1250,
+        "y": 710,
+        "wires": []
+    },
+    {
+        "id": "24ecfacc8431e252",
+        "type": "debug",
+        "z": "f813a006250e1dc9",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "3e95647a56238922",
+        "type": "ui-text",
+        "z": "f813a006250e1dc9",
+        "group": "f7898b3433968c9b",
+        "order": 5,
+        "width": 4,
+        "height": 1,
+        "name": "Temperature ",
+        "label": "Live Temperature",
+        "format": "{{msg.payload}}",
+        "layout": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1250,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "4022bc244ae23eee",
+        "type": "debug",
+        "z": "f813a006250e1dc9",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "3d55148bf28dd013",
+        "type": "inject",
+        "z": "f813a006250e1dc9",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{   \"status\": \"success\",   \"temperature\": 23.95,   \"humidity\": 70.46,   \"pressure\": 1016.44 }",
+        "payloadType": "json",
+        "x": 730,
+        "y": 620,
+        "wires": [
+            [
+                "bf48d563aacf9a2e"
+            ]
+        ]
+    },
+    {
+        "id": "90a7b8bd814a4e06",
+        "type": "mqtt in",
+        "z": "f813a006250e1dc9",
+        "name": "BME280 MQTT",
+        "topic": "/yazhini",
+        "qos": "0",
+        "datatype": "json",
+        "broker": "998a81f56f1147a3",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 520,
+        "y": 480,
+        "wires": [
+            [
+                "bf48d563aacf9a2e",
+                "68304e079b182392"
+            ]
+        ]
+    },
+    {
+        "id": "8f16f3cc2e5fcc6b",
+        "type": "ui-gauge",
+        "z": "f813a006250e1dc9",
+        "name": "Pressure",
+        "group": "f7898b3433968c9b",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 2,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": true,
+        "units": "hPa",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "950",
+                "color": "#00b5ad",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "950",
+        "max": "1050",
+        "sizeThickness": "",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
+        "className": "",
+        "x": 1510,
+        "y": 610,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "175ecd3f4cbf4b2f",
+        "type": "ui-gauge",
+        "z": "f813a006250e1dc9",
+        "name": "Temperature",
+        "group": "c97a308436fc912d",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 2,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Temperature",
+        "alwaysShowTitle": true,
+        "units": "\u00b0C",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#00b5ad",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "0",
+        "max": "50",
+        "sizeThickness": "",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
+        "className": "",
+        "x": 1510,
+        "y": 850,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7478bdce1e685ae2",
+        "type": "ui-gauge",
+        "z": "f813a006250e1dc9",
+        "name": "Humidity",
+        "group": "c97a308436fc912d",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 2,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Humidity",
+        "alwaysShowTitle": true,
+        "units": "%",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#00b5ad",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
+        "className": "",
+        "x": 1510,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a620fc47b282d5f4",
+        "type": "ui-gauge",
+        "z": "f813a006250e1dc9",
+        "name": "Pressure",
+        "group": "c97a308436fc912d",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 2,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Pressure",
+        "alwaysShowTitle": true,
+        "units": "hPa",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "950",
+                "color": "#00b5ad",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "950",
+        "max": "1050",
+        "sizeThickness": "",
+        "sizeGap": "",
+        "sizeKeyThickness": "",
+        "className": "",
+        "x": 1510,
+        "y": 950,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f7898b3433968c9b",
+        "type": "ui-group",
+        "name": "Local Environment (BME280)",
+        "page": "8fe493ab4dd05195",
+        "width": "6",
+        "height": "4",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default",
+        "tab": ""
+    },
+    {
+        "id": "68c0493a53185cf9",
+        "type": "ui-group",
+        "name": "Clothes Drying Estimator",
+        "page": "8fe493ab4dd05195",
+        "width": "12",
+        "height": "4",
+        "order": 3
+    },
+    {
+        "id": "c97a308436fc912d",
+        "type": "ui-group",
+        "name": "Chennai Weather (OpenWeather)",
+        "page": "8fe493ab4dd05195",
+        "width": "6",
+        "height": "4",
+        "order": 2,
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "998a81f56f1147a3",
+        "type": "mqtt-broker",
+        "name": "broker.emqx.io",
+        "broker": "broker.emqx.io",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "8fe493ab4dd05195",
+        "type": "ui-page",
+        "name": "Smart Dryer & Weather",
+        "ui": "294f3e9fd7eade13",
+        "path": "/drying",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "493ca8d694534028",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "tabs": [],
+        "order": 1,
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "294f3e9fd7eade13",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "493ca8d694534028",
+        "type": "ui-theme",
+        "name": "Drying Dashboard Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#1976d2",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "8px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "403daa740738db20",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.33.0"
+        }
+    }
+]
