@@ -1,33 +1,35 @@
-# CAT11 TASK11A: NUCLEO-F401RE / Blue Pill Heartbeat LED Blinker
+# TASK11A – TCP Server Setup and IP Retrieval
 
-**Course:** 25CS2741 Fundamentals of Internet of Things + Lab  
-**Student:** Yazhini J E (Reg No: 25011102119)  
-**Institution:** Shiv Nadar University Chennai  
-**Date:** 19/10/2026  
-**Platform:** STM32 NUCLEO-F401RE / STM32F103C8T6  
-**Core Clock:** 84 MHz (F401RE) / 72 MHz (F103)  
+## Experiment Details
 
----
+**EXP:** CONTINUOUS ASSESSMENT 11 – TASK A
+**DATE:** 14/10/2026
+**NAME:** HTTP Server – STM32–Wemos Wi-Fi Modem Using AT Commands
+**PLATFORM:** STM32 Blue Pill (STM32F103C8T6) + Wemos D1 Mini (ESP8266)
 
-## 1. Overview & Objectives
-This experiment verifies the hardware board bring-up and toolchain setup for the STM32 ARM Cortex-M platform. An on-board user LED (`PA5` on NUCLEO-F401RE or `PC13` on Blue Pill) is configured as a general-purpose digital output and toggled at a 1 Hz heartbeat frequency (500 ms ON, 500 ms OFF) using `HAL_GPIO_TogglePin()` and `HAL_Delay()`.
+## Objective
 
----
+Enable the ESP8266 as a multi-connection TCP server on port 80, retrieve the
+device IP address, and capture incoming `+IPD` data frames from HTTP clients.
 
-## 2. Hardware Pinout Table
-| Board | User LED Pin | Active State | Drive Configuration |
-|---|---|---|---|
-| **NUCLEO-F401RE** | `PA5` (LD2) | Active HIGH | Push-Pull, No-Pull, High Speed |
-| **Blue Pill (F103)**| `PC13` | Active LOW | Push-Pull, No-Pull, Low Speed |
+## Working Principle
 
----
+After Wi-Fi association, the STM32 sends:
+- `AT+CIPMUX=1` – enable multi-connection mode
+- `AT+CIPSERVER=1,80` – open TCP listener on port 80
+- `AT+CIFSR` – retrieve and log the device IP address
 
-## 3. Circuit Schematic
-![Circuit Diagram](circuit.png)
+The STM32 then monitors USART2 for incoming `+IPD,<id>,<len>:<data>` frames
+indicating an HTTP client has connected.
 
----
+## Circuit
 
-## 4. Build, Flashing & Execution
-1. Open `MDK-ARM/Led-Blink.uvprojx` in Keil µVision.
-2. Compile project (`F7`) and download to board (`F8`).
-3. Verify regular 1 Hz blinking of user LED LD2.
+- `PA2` : USART2_TX → RXD of ESP8266
+- `PA3` : USART2_RX → TXD of ESP8266
+- `PA9` : USART1_TX → PC Debug Console
+- `PC13` : Status LED
+
+## Project Files
+
+- `Core/Src/main.c` – TCP server configuration and +IPD frame capture
+- `Task-10C.ioc` – STM32CubeMX configuration

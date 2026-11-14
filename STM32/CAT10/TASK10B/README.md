@@ -1,33 +1,23 @@
-# CAT10 TASK10B: ESP8266 Station Mode Wi-Fi Join Controller
+# TASK10B – ESP8266 AT Command Interface
 
-**Course:** 25CS2741 Fundamentals of Internet of Things + Lab  
-**Student:** Yazhini J E (Reg No: 25011102119)  
-**Institution:** Shiv Nadar University Chennai  
-**Date:** 12/10/2026  
-**Platform:** STM32F103C8T6 + ESP8266 Wemos D1 Mini  
-**Core Clock:** 72 MHz  
+## Experiment Details
 
----
+**EXP:** CONTINUOUS ASSESSMENT 10 – TASK B
+**DATE:** 12/10/2026
+**NAME:** STM32–Wemos Wi-Fi Modem Interface Using AT Commands
+**PLATFORM:** STM32 Blue Pill (STM32F103C8T6) + Wemos D1 Mini (ESP8266)
 
-## 1. Overview & Objectives
-This experiment implements automated Wi-Fi station association through Hayes AT command sequencing. The STM32 initializes the ESP8266 into Station mode (`AT+CWMODE=1`), commands it to associate with the local Wi-Fi Access Point using sanitized credentials (`AT+CWJAP="YOUR_WIFI_SSID","YOUR_WIFI_PASSWORD"`), and queries the acquired local IP address using `AT+CIFSR`.
+## Objective
 
----
+Exercise the full AT command set on the ESP8266 Wi-Fi modem:
+set station mode, connect to an access point, and retrieve the assigned IP address.
 
-## 2. AT Command Handshake Sequence
-1. `AT` -> Expect `OK`
-2. `AT+CWMODE=1` -> Configures Wi-Fi Station Mode -> Expect `OK`
-3. `AT+CWJAP="YOUR_WIFI_SSID","YOUR_WIFI_PASSWORD"` -> Joins Wi-Fi network -> Expect `WIFI CONNECTED` and `WIFI GOT IP`
-4. `AT+CIFSR` -> Retrieves assigned IP and MAC address -> Parsed by STM32.
+## Working Principle
 
----
+The STM32 sequences AT commands (`AT+CWMODE=1`, `AT+CWJAP`, `AT+CIFSR`) over USART2
+and logs responses via USART1 to a PC terminal, exercising the AT command interface.
 
-## 3. Circuit Schematic
-![Circuit Diagram](circuit.png)
+## Project Files
 
----
-
-## 4. Build, Flashing & Execution
-1. Open `MDK-ARM/TASK_10B_WiFi_Join.uvprojx` in Keil µVision.
-2. Build and flash target firmware.
-3. Verify connection via serial log showing acquired IP address.
+- `Core/Src/main.c` – AT command sequencer
+- `Wemos.ioc` – STM32CubeMX configuration

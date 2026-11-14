@@ -1,34 +1,29 @@
-# CAT12 TASK12A: I2C Master Bus Bring-Up & Device Address Scanner
+# TASK12A – On-board LED Bring-Up (Bare-Metal Blink)
 
-**Course:** 25CS2741 Fundamentals of Internet of Things + Lab  
-**Student:** Yazhini J E (Reg No: 25011102119)  
-**Institution:** Shiv Nadar University Chennai  
-**Date:** 26/10/2026  
-**Platform:** STM32 NUCLEO-F401RE / STM32F103C8T6  
-**Core Clock:** 84 MHz  
+## Experiment Details
 
----
+**EXP:** CONTINUOUS ASSESSMENT 12 – TASK A
+**DATE:** 23/10/2026
+**NAME:** STM32F401RE Cortex-M4: GPIO and User Input Programming
+**PLATFORM:** ST NUCLEO-F401RE (STM32F401RET6, ARM Cortex-M4 @ 84 MHz)
 
-## 1. Overview & Objectives
-This experiment implements an automated I2C bus scanner on the STM32 platform. Operating the `I2C1` peripheral at Standard Mode (100 kHz), the firmware probes all 7-bit addresses (0x01 to 0x77) using `HAL_I2C_IsDeviceReady()`. Detected slave devices (such as the Bosch BME280 sensor at `0x76` or `0x77`) are logged to the host serial console.
+## Objective
 
----
+Configure PA5 as a GPIO output and toggle the on-board Green LED LD2 at 1 Hz
+using non-blocking SysTick timing.
 
-## 2. I2C Bus Pin Mapping
-| Signal | STM32 Pin | Sensor Pin | Pull-Up Configuration |
-|---|---|---|---|
-| **I2C1_SCL** | `PB8` / `PB6` | SCL | 4.7 kΩ Pull-up to 3.3V |
-| **I2C1_SDA** | `PB9` / `PB7` | SDA | 4.7 kΩ Pull-up to 3.3V |
-| **VCC / GND** | 3.3V / GND | VIN / GND | Power supply rails |
+## Working Principle
 
----
+The STM32F401RE clock is configured to 84 MHz. PA5 is set as push-pull output.
+In the main loop, `HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5)` is called every 500 ms
+using `HAL_GetTick()` for non-blocking timing, producing a 1 Hz blink.
 
-## 3. Circuit Schematic
-![Circuit Diagram](circuit.png)
+## Circuit
 
----
+- `PA5` : GPIO Output (LD2 Green LED)
+- Powered via ST-LINK USB
 
-## 4. Build, Flashing & Execution
-1. Open `MDK-ARM/MQTT.uvprojx` in Keil µVision.
-2. Build and flash target firmware.
-3. Open serial console at 115200 baud; observe I2C scan report identifying device at `0x76`.
+## Project Files
+
+- `Core/Src/main.c` – Clock config, GPIO init, non-blocking LED toggle
+- `Led-Blink.ioc` – STM32CubeMX configuration

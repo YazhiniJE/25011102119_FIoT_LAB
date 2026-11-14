@@ -1,35 +1,35 @@
-# CAT13 TASK13: Cloud IoT Telemetry Ingestion — BME280 + ESP8266 MQTT Publisher
+# TASK13 – BME280 Sensor Interfacing, HTTP Communication and Node-RED Analytics
 
-**Course:** 25CS2741 Fundamentals of Internet of Things + Lab  
-**Student:** Yazhini J E (Reg No: 25011102119)  
-**Institution:** Shiv Nadar University Chennai  
-**Date:** 02/11/2026  
-**Platform:** STM32 NUCLEO-F401RE + ESP8266 + BME280  
-**Core Clock:** 84 MHz  
+## Experiment Details
 
----
+**EXP:** CONTINUOUS ASSESSMENT 13
+**DATE:** 27/10/2026
+**NAME:** Sensor Interfacing (BME280) - STM32 (Debug) - ESP8266 (Wi-Fi) HTTP - Node Analytics
+**PLATFORM:** ST NUCLEO-F401RE + Bosch BME280 (I2C) + ESP8266 Wi-Fi + Node-RED
 
-## 1. Overview & Objectives
-This capstone experiment implements an end-to-end Edge-to-Cloud IoT telemetry node. The STM32 microcontroller samples environmental metrics from a BME280 sensor over I2C, encapsulates the measurements into a JSON payload, and commands an attached ESP8266 Wi-Fi modem to publish the payload to an MQTT Broker (`broker.hivemq.com` / Adafruit IO) under the course telemetry topic:
-`iot/snuc/25011102119/sensors`
+## Objective
 
----
+Interface the BME280 environmental sensor with STM32 over I2C, transmit sensor
+readings (temperature, pressure, humidity) via ESP8266 over HTTP to a Node-RED
+analytics dashboard.
 
-## 2. Network & Cloud Credentials (Sanitized)
-- **Wi-Fi SSID:** `YOUR_WIFI_SSID`
-- **Wi-Fi Password:** `YOUR_WIFI_PASSWORD`
-- **MQTT Broker:** `broker.hivemq.com` (Port 1883)
-- **MQTT Client ID:** `STM32_FIoT_25011102119`
-- **Publish Topic:** `iot/snuc/25011102119/sensors`
+## Circuit
 
----
+- `PB8` : I2C1_SCL → BME280 SCL
+- `PB9` : I2C1_SDA → BME280 SDA
+- `PA9` : USART1_TX → ESP8266 RXD
+- `PA10` : USART1_RX → ESP8266 TXD
+- `PA5` : Status LED (LD2)
 
-## 3. Circuit Schematic
-![Circuit Diagram](circuit.png)
+## Implementation
 
----
+1. BME280 reads temperature (°C), pressure (hPa), humidity (%RH) via I2C using the Bosch Sensortec API.
+2. STM32 formats readings into an HTTP GET request and sends it via ESP8266 AT commands.
+3. A Node-RED HTTP-in node receives the data and routes it to gauge and chart dashboard widgets.
 
-## 4. Build, Flashing & Execution
-1. Open `MDK-ARM/Weather_MQTT.uvprojx` in Keil µVision.
-2. Build and flash target firmware.
-3. Subscribe to `iot/snuc/25011102119/sensors` on an MQTT client (e.g. MQTTX); verify live incoming sensor readings.
+## Project Files
+
+- `Core/Src/main.c` – Sensor acquisition, HTTP transmission loop
+- `Core/Inc/` – BME280 driver headers
+- `circuit.png` – Hardware wiring diagram
+- `flows.json` – Node-RED analytics flow

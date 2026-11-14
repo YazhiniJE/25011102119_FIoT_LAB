@@ -1,346 +1,253 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : main.c
+  * @brief          : Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+/* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "bme280.h"
-#include <stdint.h>
 
-/* Peripheral handles */
-I2C_HandleTypeDef hi2c1;
-UART_HandleTypeDef huart1;
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
-/* BME280 driver structures */
-struct bme280_dev dev;
-struct bme280_data comp_data;
-struct bme280_settings settings;
+/* USER CODE END Includes */
 
-/* Diagnostic variables: add these to Keil Watch 1 */
-volatile int8_t rslt = BME280_OK;
-volatile uint8_t error_stage = 0;
-volatile uint8_t detected_address = 0;
-volatile uint8_t address_76_status = 255;
-volatile uint8_t address_77_status = 255;
-volatile uint8_t chip_id = 0;
-volatile uint32_t i2c_hal_error = 0;
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
 
-/* Sensor readings */
-volatile float temperature = 0.0f;
-volatile float pressure = 0.0f;
-volatile float humidity = 0.0f;
+/* USER CODE END PTD */
 
-/* BME280 I2C address */
-static uint8_t dev_addr = BME280_I2C_ADDR_PRIM;
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
 
-/* Function prototypes */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
-static void MX_USART1_UART_Init(void);
-void Error_Handler(void);
+/* USER CODE BEGIN PFP */
 
-int8_t user_i2c_read(uint8_t reg_addr,
-                     uint8_t *reg_data,
-                     uint32_t len,
-                     void *intf_ptr);
+/* USER CODE END PFP */
 
-int8_t user_i2c_write(uint8_t reg_addr,
-                      const uint8_t *reg_data,
-                      uint32_t len,
-                      void *intf_ptr);
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
 
-void user_delay_us(uint32_t period, void *intf_ptr);
+/* USER CODE END 0 */
 
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
-    HAL_Init();
 
-    SystemClock_Config();
+  /* USER CODE BEGIN 1 */
 
-    MX_GPIO_Init();
-    MX_I2C1_Init();
-    MX_USART1_UART_Init();
+  /* USER CODE END 1 */
 
-    /* Stage 1: Check I2C addresses */
+  /* MCU Configuration--------------------------------------------------------*/
 
-    error_stage = 1;
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-    address_76_status = HAL_I2C_IsDeviceReady(
-        &hi2c1, (uint16_t)(0x76U << 1), 3, 100
-    );
+  /* USER CODE BEGIN Init */
 
-    address_77_status = HAL_I2C_IsDeviceReady(
-        &hi2c1, (uint16_t)(0x77U << 1), 3, 100
-    );
+  /* USER CODE END Init */
 
-    if (address_76_status == HAL_OK)
-    {
-        detected_address = 0x76;
-    }
-    else if (address_77_status == HAL_OK)
-    {
-        detected_address = 0x77;
-    }
-    else
-    {
-        i2c_hal_error = HAL_I2C_GetError(&hi2c1);
-        Error_Handler();
-    }
+  /* Configure the system clock */
+  SystemClock_Config();
 
-    dev_addr = detected_address;
+  /* USER CODE BEGIN SysInit */
 
-    /* Stage 2: Configure Bosch driver interface */
+  /* USER CODE END SysInit */
 
-    error_stage = 2;
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  /* USER CODE BEGIN 2 */
 
-    dev.intf_ptr = &dev_addr;
-    dev.intf = BME280_I2C_INTF;
-    dev.read = user_i2c_read;
-    dev.write = user_i2c_write;
-    dev.delay_us = user_delay_us;
+  /* USER CODE END 2 */
 
-    /* Stage 3: Initialize BME280 */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  /* USER CODE BEGIN 2 */
+  uint8_t prev = GPIO_PIN_SET;
+  uint32_t press_t = 0;
+  uint8_t blink = 0;
+  uint32_t blink_t = 0;
+  /* USER CODE END 2 */
 
-    error_stage = 3;
+  while (1)
+  {
+    /* USER CODE END WHILE */
 
-    rslt = bme280_init(&dev);
+    /* USER CODE BEGIN 3 */
+    uint8_t cur = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+    uint32_t now = HAL_GetTick();
 
-    if (rslt != BME280_OK)
-    {
-        i2c_hal_error = HAL_I2C_GetError(&hi2c1);
-        Error_Handler();
+    if (prev == GPIO_PIN_SET && cur == GPIO_PIN_RESET) {
+        press_t = now;
     }
 
-    /* Read chip ID: BME280 chip ID is 0x60 */
-
-    error_stage = 4;
-
-    if (user_i2c_read(0xD0, (uint8_t *)&chip_id,
-                      1, &dev_addr) != BME280_OK)
-    {
-        i2c_hal_error = HAL_I2C_GetError(&hi2c1);
-        Error_Handler();
-    }
-
-    if (chip_id != 0x60)
-    {
-        Error_Handler();
-    }
-
-    /* Stage 5: Configure sensor settings */
-
-    error_stage = 5;
-
-    settings.osr_t = BME280_OVERSAMPLING_1X;
-    settings.osr_p = BME280_OVERSAMPLING_1X;
-    settings.osr_h = BME280_OVERSAMPLING_1X;
-    settings.filter = BME280_FILTER_COEFF_OFF;
-
-    rslt = bme280_set_sensor_settings(
-        BME280_SEL_OSR_PRESS |
-        BME280_SEL_OSR_TEMP |
-        BME280_SEL_OSR_HUM |
-        BME280_SEL_FILTER,
-        &settings,
-        &dev
-    );
-
-    if (rslt != BME280_OK)
-    {
-        i2c_hal_error = HAL_I2C_GetError(&hi2c1);
-        Error_Handler();
-    }
-
-    /* Stage 6: Enable normal mode */
-
-    error_stage = 6;
-
-    rslt = bme280_set_sensor_mode(
-        BME280_POWERMODE_NORMAL,
-        &dev
-    );
-
-    if (rslt != BME280_OK)
-    {
-        i2c_hal_error = HAL_I2C_GetError(&hi2c1);
-        Error_Handler();
-    }
-
-    /* Stage 7: Sensor is initialized */
-
-    error_stage = 7;
-
-    while (1)
-    {
-        rslt = bme280_get_sensor_data(
-            BME280_ALL,
-            &comp_data,
-            &dev
-        );
-
-        if (rslt == BME280_OK)
-        {
-            temperature = comp_data.temperature;
-            pressure = comp_data.pressure / 100.0f;
-            humidity = comp_data.humidity;
-
-            error_stage = 8;
+    if (prev == GPIO_PIN_RESET && cur == GPIO_PIN_SET) {
+        if (now - press_t >= 500) {
+            // Long press >= 500 ms: toggle blink mode
+            blink = !blink;
+        } else if (now - press_t >= 30) {
+            // Short press: toggle LED and remember state
+            if (!blink) {
+                HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+            }
         }
-        else
-        {
-            i2c_hal_error = HAL_I2C_GetError(&hi2c1);
-            error_stage = 9;
-        }
-
-        HAL_Delay(1000);
     }
+    prev = cur;
+
+    if (blink && (now - blink_t >= 200)) {
+        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+        blink_t = now;
+    }
+  }
+  /* USER CODE END 3 */
 }
 
-/* BME280 I2C read callback */
-int8_t user_i2c_read(uint8_t reg_addr,
-                     uint8_t *reg_data,
-                     uint32_t len,
-                     void *intf_ptr)
-{
-    uint8_t address = *(uint8_t *)intf_ptr;
-
-    HAL_StatusTypeDef status;
-
-    status = HAL_I2C_Mem_Read(
-        &hi2c1,
-        (uint16_t)(address << 1),
-        reg_addr,
-        I2C_MEMADD_SIZE_8BIT,
-        reg_data,
-        (uint16_t)len,
-        100
-    );
-
-    if (status == HAL_OK)
-        return BME280_OK;
-
-    return BME280_E_COMM_FAIL;
-}
-
-/* BME280 I2C write callback */
-int8_t user_i2c_write(uint8_t reg_addr,
-                      const uint8_t *reg_data,
-                      uint32_t len,
-                      void *intf_ptr)
-{
-    uint8_t address = *(uint8_t *)intf_ptr;
-
-    HAL_StatusTypeDef status;
-
-    status = HAL_I2C_Mem_Write(
-        &hi2c1,
-        (uint16_t)(address << 1),
-        reg_addr,
-        I2C_MEMADD_SIZE_8BIT,
-        (uint8_t *)reg_data,
-        (uint16_t)len,
-        100
-    );
-
-    if (status == HAL_OK)
-        return BME280_OK;
-
-    return BME280_E_COMM_FAIL;
-}
-
-/* Bosch driver delay callback */
-void user_delay_us(uint32_t period, void *intf_ptr)
-{
-    uint32_t delay_ms = (period + 999U) / 1000U;
-
-    if (delay_ms > 0U)
-        HAL_Delay(delay_ms);
-}
-
-/* System clock configuration */
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
-    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-    __HAL_RCC_PWR_CLK_ENABLE();
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-    __HAL_PWR_VOLTAGESCALING_CONFIG(
-        PWR_REGULATOR_VOLTAGE_SCALE2
-    );
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 84;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLR = 2;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLM = 4;
-    RCC_OscInitStruct.PLL.PLLN = 84;
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-    RCC_OscInitStruct.PLL.PLLQ = 4;
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-        Error_Handler();
-
-    RCC_ClkInitStruct.ClockType =
-        RCC_CLOCKTYPE_HCLK |
-        RCC_CLOCKTYPE_SYSCLK |
-        RCC_CLOCKTYPE_PCLK1 |
-        RCC_CLOCKTYPE_PCLK2;
-
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-    if (HAL_RCC_ClockConfig(
-        &RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-        Error_Handler();
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
-/* I2C1 initialization */
-static void MX_I2C1_Init(void)
-{
-    hi2c1.Instance = I2C1;
-    hi2c1.Init.ClockSpeed = 100000;
-    hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-    hi2c1.Init.OwnAddress1 = 0;
-    hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-    hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-    hi2c1.Init.OwnAddress2 = 0;
-    hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-    hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-
-    if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-        Error_Handler();
-}
-
-/* USART1 initialization */
-static void MX_USART1_UART_Init(void)
-{
-    huart1.Instance = USART1;
-    huart1.Init.BaudRate = 115200;
-    huart1.Init.WordLength = UART_WORDLENGTH_8B;
-    huart1.Init.StopBits = UART_STOPBITS_1;
-    huart1.Init.Parity = UART_PARITY_NONE;
-    huart1.Init.Mode = UART_MODE_TX_RX;
-    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-
-    if (HAL_UART_Init(&huart1) != HAL_OK)
-        Error_Handler();
-}
-
-/* GPIO clock initialization */
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 static void MX_GPIO_Init(void)
 {
-    __HAL_RCC_GPIOH_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
-/* Error handler: error_stage remains visible in Watch 1 */
+/* USER CODE BEGIN 4 */
+
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
 void Error_Handler(void)
 {
-    __disable_irq();
-
-    while (1)
-    {
-        /* Inspect error_stage, rslt and i2c_hal_error */
-    }
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
 }
+#ifdef USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */
